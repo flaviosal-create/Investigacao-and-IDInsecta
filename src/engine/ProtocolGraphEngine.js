@@ -22,6 +22,13 @@ suggestNextProtocol(
     return null;
   }
 
+  if (
+    protocolId === "ordens-insecta-v1" &&
+    !investigation?.finalizedAt
+  ) {
+    return null;
+  }
+
   const nextProtocol =
     protocolGraph?.[
       protocolId

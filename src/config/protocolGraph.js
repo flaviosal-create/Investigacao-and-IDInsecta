@@ -12,6 +12,10 @@ export const protocolGraph = {
     insecta: "ordens-insecta-v1",
   },
 
+  "ordens-insecta-v1": {
+    coleoptera: "familias-coleoptera-v1",
+  },
+
   "grandes-grupos-vegetais-v1": {
     angiospermas:
       "grandes-grupos-angiospermas-v1",

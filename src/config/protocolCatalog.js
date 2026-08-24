@@ -1,4 +1,5 @@
 import { ordensInsectaV1 } from "../protocols/zoologia/ordensInsectaV1.js";
+import { familiasColeopteraV1 } from "../protocols/zoologia/familiasColeopteraV1.js";
 import { grandesGruposVegetaisV1 } from "../protocols/botanica/grandesGruposVegetaisV1.js";
 import { grandesGruposAngiospermasV1 } from "../protocols/botanica/grandesGruposAngiospermasV1.js";
 import { ordensAngiospermasBrasilV1 } from "../protocols/botanica/ordensAngiospermasBrasilV1.js";
@@ -24,6 +25,7 @@ import {
 
 export const protocols = [
   ordensInsectaV1,
+  familiasColeopteraV1,
   gruposInvertebradosV1,
   classesPoriferaV1,
   classesCnidariaV1,
@@ -110,6 +112,14 @@ export const protocolCatalog = [
     stageOrder: 3,
     order: 8,
     related: [],
+  },
+  {
+    id: familiasColeopteraV1.id,
+    track: "Aprofundamento investigativo",
+    stage: "Famílias de Coleoptera",
+    stageOrder: 4,
+    order: 1,
+    related: [ordensInsectaV1.id],
   },
   {
     id: grandesGruposVegetaisV1.id,

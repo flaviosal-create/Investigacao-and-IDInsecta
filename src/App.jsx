@@ -8,7 +8,6 @@ import { SidebarContextPanel } from "./components/sidebar/SidebarContextPanel.js
 import { useInvestigationSession } from "./hooks/useInvestigationSession.js";
 import { useProtocolSelection } from "./hooks/useProtocolSelection.js";
 import { getProtocolById } from "./config/protocolCatalog.js";
-import { ProtocolEditor } from "./components/ProtocolEditor.jsx";
 import { BrandLogo } from "./components/ui/BrandLogo.jsx";
 import LegacyInsectaKey from "./legacy-insecta/LegacyInsectaKey.jsx";
 import "./legacy-insecta/legacyStyles.css";
@@ -37,7 +36,6 @@ export default function App() {
     domainProtocols,
     groupedProtocols,
     getProtocolMetadata,
-    addLocalProtocol,
   } = useProtocolSelection();
   const protocoloInsectaId = "ordens-insecta-v1";
   const dominiosDisponiveis = domains.filter(
@@ -106,19 +104,6 @@ export default function App() {
             setActivePage("universo");
           }}
         />
-      ) : activePage === "editor" ? (
-        <ProtocolEditor
-          onBack={() => setActivePage("universo")}
-          onAddToLocalCatalog={(protocol) => {
-            const result = addLocalProtocol(protocol);
-            if (result.ok) {
-              setSelectedDomainId(protocol.domain);
-              setSelectedProtocolId(protocol.id);
-              setActivePage("universo");
-            }
-            return result;
-          }}
-        />
       ) : activePage === "universo" ? (
         <main className="start-page">
           <section className="start-shell">
@@ -165,13 +150,6 @@ export default function App() {
                     }}
                   >
                     Investigar
-                  </button>
-                  <button
-                    className="secondary-button"
-                    type="button"
-                    onClick={() => setActivePage("editor")}
-                  >
-                    Criar protocolo
                   </button>
                 </div>
               }

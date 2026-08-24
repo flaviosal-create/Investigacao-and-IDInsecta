@@ -14,6 +14,9 @@ export function generateReport(
     observations:
       investigation.observations,
 
+    hypotheses:
+      investigation.hypotheses ?? [],
+
     history:
       investigation.history ?? [],
 

@@ -4,14 +4,12 @@ import { HypothesesPanel } from "./HypothesesPanel.jsx";
 import { HypothesisThermometerStrip } from "./HypothesisThermometerStrip.jsx";
 import { SuggestionCard } from "./insights/SuggestionCard.jsx";
 import { ConclusionCard } from "./insights/ConclusionCard.jsx";
-import { NarrativeCard } from "./insights/NarrativeCard.jsx";
+import { InvestigationReportDocument } from "./InvestigationReportDocument.jsx";
 import { TeacherGuideCard } from "./insights/TeacherGuideCard.jsx";
 import { InsightCard } from "./ui/InsightCard.jsx";
 import { useRef, useState } from "react";
 import { NextProtocolCard }
 from "./insights/NextProtocolCard.jsx";
-import { InvestigationHistoryCard }
-from "./insights/InvestigationHistoryCard.jsx";
 import { CalibrationReviewPanel }
 from "./CalibrationReviewPanel.jsx";
 import { downloadInvestigationReport }
@@ -327,10 +325,10 @@ function WorkspaceReportPanel({
 
   return (
     <InsightCard title="Relatório narrativo" bodyClassName="report-card">
-      <NarrativeCard report={report} />
-
-      <span className="report-label">Percurso investigativo</span>
-      <InvestigationHistoryCard history={report.history} />
+      <InvestigationReportDocument
+        report={report}
+        selectedProtocol={selectedProtocol}
+      />
 
       <button
         className="secondary-button"

@@ -35,7 +35,7 @@
   padding: 22px clamp(12px, 3vw, 34px) 40px;
 }
 
-.app-shell-insecta-key {
+.app-shell.app-shell-insecta-key {
   display: block;
 }
 

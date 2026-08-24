@@ -46,6 +46,7 @@
 .legacy-insecta-page .config-sessao-page { max-width: 980px; margin: 0 auto; }
 .legacy-insecta-page .config-sessao-action-card { width: 100%; border: 1px solid var(--color-border); border-radius: 14px; padding: 15px; background: var(--color-surface); color: var(--color-text); cursor: pointer; text-align: center; box-shadow: var(--shadow-sm); }
 .legacy-insecta-page .config-sessao-action-card--primary { background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; border: 0; }
+.legacy-insecta-page .config-sessao-action-card:not(.config-sessao-action-card--primary) { background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; border: 0; }
 .legacy-insecta-page .config-sessao-action-card span, .legacy-insecta-page .config-sessao-action-card small { display: block; }
 .legacy-insecta-page .config-sessao-action-card span { font-weight: 900; font-size: 17px; }
 .legacy-insecta-page .config-sessao-action-card small { margin-top: 3px; opacity: .82; }

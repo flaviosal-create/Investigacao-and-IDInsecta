@@ -18,7 +18,7 @@ export default function App() {
   const [
     activePage,
     setActivePage,
-  ] = useState("insecta-key");
+  ] = useState("universo");
   const [
     activeInvestigationPanel,
     setActiveInvestigationPanel,
@@ -90,8 +90,7 @@ export default function App() {
         <LegacyInsectaKey
           onBack={() => setActivePage("universo")}
           onStartInvestigative={() => {
-            startSuggestedProtocol("ordens-insecta-v1");
-            setActivePage("investigar");
+            setActivePage("universo");
           }}
         />
       ) : activePage === "editor" ? (

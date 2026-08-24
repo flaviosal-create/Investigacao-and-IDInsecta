@@ -59,6 +59,11 @@ export default function App() {
     unregisterObservation,
     resetSession,
     loadObservations,
+    finalizeInvestigation,
+    reopenInvestigation,
+    startNewInvestigation,
+    restoreArchivedInvestigation,
+    archivedInvestigations,
   } = useInvestigationSession(
     selectedProtocol
   );
@@ -244,6 +249,14 @@ export default function App() {
               loadObservations(observations);
               setActiveInvestigationPanel("investigar");
             }}
+            onFinalizeInvestigation={finalizeInvestigation}
+            onReopenInvestigation={reopenInvestigation}
+            onStartNewInvestigation={() => {
+              startNewInvestigation();
+              setActiveInvestigationPanel("investigar");
+            }}
+            archivedInvestigations={archivedInvestigations}
+            onRestoreArchivedInvestigation={restoreArchivedInvestigation}
             onHighlightStructure={
               highlightStructure
             }

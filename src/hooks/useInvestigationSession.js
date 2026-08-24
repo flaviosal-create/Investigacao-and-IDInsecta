@@ -66,6 +66,8 @@ export function useInvestigationSession(
 
   const investigation =
     session?.investigation ?? null;
+  const archivedInvestigations =
+    session?.archivedInvestigations ?? [];
   const report = useMemo(
     () =>
       session
@@ -179,6 +181,45 @@ export function useInvestigationSession(
     setSessionNotice("Investigação reaberta para novas observações.");
   }
 
+  function startNewInvestigationSession() {
+    if (!selectedProtocol) return;
+
+    setSession((currentSession) => {
+      if (!currentSession) return currentSession;
+
+      return {
+        ...startSession(selectedProtocol),
+        archivedInvestigations: [
+          ...(currentSession.archivedInvestigations ?? []),
+          currentSession.investigation,
+        ],
+      };
+    });
+    setSessionNotice("Nova investigação iniciada. A investigação anterior foi arquivada.");
+  }
+
+  function restoreArchivedInvestigation(index) {
+    setSession((currentSession) => {
+      const archived = currentSession?.archivedInvestigations ?? [];
+      const selected = archived[index];
+      if (!currentSession || !selected) return currentSession;
+
+      return {
+        ...currentSession,
+        investigation: runSession({
+          protocol: selectedProtocol,
+          investigation: selected,
+        }).investigation,
+        archivedInvestigations: [
+          ...archived.slice(0, index),
+          ...archived.slice(index + 1),
+          currentSession.investigation,
+        ],
+      };
+    });
+    setSessionNotice("Investigação anterior restaurada para edição.");
+  }
+
   return {
     session,
     investigation,
@@ -191,5 +232,8 @@ export function useInvestigationSession(
     loadObservations,
     finalizeInvestigation: finalizeInvestigationSession,
     reopenInvestigation: reopenInvestigationSession,
+    startNewInvestigation: startNewInvestigationSession,
+    restoreArchivedInvestigation,
+    archivedInvestigations,
   };
 }

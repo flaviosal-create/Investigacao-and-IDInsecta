@@ -66,6 +66,9 @@ export function InvestigationWorkspace({
   onStartSuggestedProtocol,
   onFinalizeInvestigation,
   onReopenInvestigation,
+  onStartNewInvestigation,
+  archivedInvestigations,
+  onRestoreArchivedInvestigation,
 }) {
   const tabListRef = useRef(null);
   const hasThermometerSpace =
@@ -103,6 +106,9 @@ export function InvestigationWorkspace({
             onLoadObservations={onLoadObservations}
             onFinalizeInvestigation={onFinalizeInvestigation}
             onReopenInvestigation={onReopenInvestigation}
+            onStartNewInvestigation={onStartNewInvestigation}
+            archivedInvestigations={archivedInvestigations}
+            onRestoreArchivedInvestigation={onRestoreArchivedInvestigation}
           />
         );
       case "calibracao":
@@ -276,6 +282,9 @@ function WorkspaceReportPanel({
   onLoadObservations,
   onFinalizeInvestigation,
   onReopenInvestigation,
+  onStartNewInvestigation,
+  archivedInvestigations = [],
+  onRestoreArchivedInvestigation,
 }) {
   const [downloadStatus, setDownloadStatus] = useState("");
   const [snapshotStatus, setSnapshotStatus] = useState("");
@@ -348,7 +357,14 @@ function WorkspaceReportPanel({
               type="button"
               onClick={onReopenInvestigation}
             >
-              Reabrir investigação
+              Editar investigação encerrada
+            </button>
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={onStartNewInvestigation}
+            >
+              Iniciar nova investigação
             </button>
           </>
         ) : (
@@ -365,6 +381,27 @@ function WorkspaceReportPanel({
           </button>
         )}
       </div>
+
+      {archivedInvestigations.length ? (
+        <section className="archived-investigations" aria-label="Investigações arquivadas">
+          <span className="report-label">Investigações arquivadas</span>
+          {archivedInvestigations.map((archived, index) => (
+            <div className="archived-investigation-item" key={`${archived.id ?? "investigacao"}-${index}`}>
+              <span>
+                {archived.observations?.length ?? 0} observação(ões)
+                {archived.finalizedAt ? " · encerrada" : " · em andamento"}
+              </span>
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={() => onRestoreArchivedInvestigation(index)}
+              >
+                Editar anterior
+              </button>
+            </div>
+          ))}
+        </section>
+      ) : null}
 
       <button
         className="secondary-button"

@@ -29,9 +29,16 @@ export function loadPersistedSession(
       return null;
     }
 
+    const archivedInvestigations = Array.isArray(snapshot.archivedInvestigations)
+      ? snapshot.archivedInvestigations
+      : [];
+
     return {
       protocol,
       investigation: snapshot.investigation,
+      ...(archivedInvestigations.length
+        ? { archivedInvestigations }
+        : {}),
     };
   } catch {
     return null;
@@ -61,6 +68,9 @@ export function saveSession(
         version: SESSION_VERSION,
         protocolId,
         investigation,
+        ...(session.archivedInvestigations?.length
+          ? { archivedInvestigations: session.archivedInvestigations }
+          : {}),
       })
     );
 

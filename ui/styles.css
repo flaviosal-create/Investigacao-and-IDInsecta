@@ -2203,6 +2203,26 @@ button:disabled {
   font-size: 0.86rem;
 }
 
+.archived-investigations {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #dbe4ef;
+}
+
+.archived-investigation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #51627e;
+  font-size: 0.86rem;
+}
+
 @media (max-width: 620px) {
   .investigation-report-header {
     flex-direction: column;

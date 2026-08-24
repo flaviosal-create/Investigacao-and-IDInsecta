@@ -20,6 +20,7 @@ export function startSession(
       startInvestigation(
         protocol.id
       ),
+    archivedInvestigations: [],
   };
 }
 

@@ -35,6 +35,10 @@
   padding: 22px clamp(12px, 3vw, 34px) 40px;
 }
 
+.app-shell-insecta-key {
+  display: block;
+}
+
 .legacy-insecta-page *, .legacy-insecta-page *::before, .legacy-insecta-page *::after { box-sizing: border-box; }
 .legacy-insecta-page button, .legacy-insecta-page input, .legacy-insecta-page select { font: inherit; }
 .legacy-insecta-page .surface { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }

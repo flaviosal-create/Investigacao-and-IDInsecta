@@ -151,6 +151,13 @@ export default function App() {
                   >
                     Investigar
                   </button>
+                  <button
+                    className="secondary-button"
+                    type="button"
+                    onClick={() => setActivePage("insecta-key")}
+                  >
+                    Voltar para a Chave de Insecta
+                  </button>
                 </div>
               }
             />

@@ -239,6 +239,7 @@ export function runInvestigation(
     {
       hypotheses,
       conclusion,
+      finalizedAt: investigation.finalizedAt,
     }
   );
 

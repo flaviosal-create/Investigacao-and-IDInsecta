@@ -66,7 +66,7 @@ export default function ConfigurarSessao({
           data-testid="config-start-main"
           onClick={() => onStart?.(mode, aluno, totalFinal, "", gabarito, tempoMinutos)}
         >
-          <span>Chave para Ordens de Insecta</span>
+          <span>Modo Chave Dicotômica</span>
           <small>começar pela identificação das ordens</small>
         </button>
 

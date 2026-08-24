@@ -156,7 +156,7 @@ export default function App() {
                     type="button"
                     onClick={() => setActivePage("insecta-key")}
                   >
-                    Voltar para a Chave de Insecta
+                    Voltar
                   </button>
                 </div>
               }

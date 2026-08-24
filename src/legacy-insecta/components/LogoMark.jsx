@@ -6,7 +6,7 @@ export default function LogoMark({ inverted = false }) {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 10,
+        gap: 4,
         color: inverted ? "#ffffff" : "var(--color-primary)",
       }}
     >

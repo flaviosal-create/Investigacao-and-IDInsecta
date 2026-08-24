@@ -6,4 +6,7 @@ export default defineConfig({
   server: {
     strictPort: true,
   },
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
 });

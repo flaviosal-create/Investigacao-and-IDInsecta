@@ -50,9 +50,33 @@
 .legacy-insecta-page .config-sessao-action-card span { font-weight: 900; font-size: 17px; }
 .legacy-insecta-page .config-sessao-action-card small { margin-top: 3px; opacity: .82; }
 .legacy-insecta-page .config-sessao-hero { gap: 12px !important; }
+.legacy-insecta-page .config-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 42px);
+  width: 100%;
+  padding: 4px 0 8px;
+}
+.legacy-insecta-page .config-brand-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+}
+.legacy-insecta-page .config-investigation-logo {
+  width: min(100%, 260px);
+}
+.legacy-insecta-page .config-brand-item--key > div {
+  max-width: 100%;
+}
 .legacy-insecta-page .legacy-back-button, .legacy-insecta-page .legacy-link-button { border: 0; background: transparent; color: var(--color-primary); cursor: pointer; font-weight: 800; padding: 4px 0; }
 .legacy-insecta-page .legacy-key-toolbar { max-width: 980px; margin: 0 auto 10px; display: flex; justify-content: space-between; gap: 12px; }
 .legacy-insecta-page .layout-chave-hero { max-width: 980px; margin-inline: auto; }
 .legacy-insecta-page .layout-chave-main-card { max-width: 980px; margin-inline: auto; }
 .legacy-insecta-page .toast-container { z-index: 1000; }
-@media (max-width: 620px) { .legacy-insecta-page .legacy-key-toolbar { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 620px) {
+  .legacy-insecta-page .legacy-key-toolbar { align-items: flex-start; flex-direction: column; }
+  .legacy-insecta-page .config-brand-row { flex-direction: column; gap: 12px; }
+}

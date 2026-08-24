@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { chavesConfig } from "./config/chavesConfig.js";
+import { BrandLogo } from "../../components/ui/BrandLogo.jsx";
 import LabBioMark from "../components/LabBioMark.jsx";
+import LogoMark from "../components/LogoMark.jsx";
 
 export default function ConfigurarSessao({
   mode,
@@ -37,8 +39,13 @@ export default function ConfigurarSessao({
   return (
     <div className="config-sessao-page" style={container} data-testid="configurar-sessao-page">
       <section className="surface config-sessao-hero" style={hero}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
-          <LabBioMark />
+        <div className="config-brand-row" aria-label="Identidade das aplicações">
+          <div className="config-brand-item">
+            <BrandLogo className="config-investigation-logo" />
+          </div>
+          <div className="config-brand-item config-brand-item--key">
+            <LogoMark />
+          </div>
         </div>
 
         {isProva ? (

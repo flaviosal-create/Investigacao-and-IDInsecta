@@ -2223,6 +2223,19 @@ button:disabled {
   font-size: 0.86rem;
 }
 
+.report-next-investigation {
+  display: grid;
+  gap: 8px;
+  padding: 13px 14px;
+  border: 1px solid #b8d9c8;
+  border-radius: 8px;
+  background: #f1fbf5;
+}
+
+.report-next-investigation strong {
+  color: #185c3a;
+}
+
 @media (max-width: 620px) {
   .investigation-report-header {
     flex-direction: column;

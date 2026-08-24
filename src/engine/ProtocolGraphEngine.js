@@ -16,15 +16,15 @@ suggestNextProtocol(
   }
 
   if (
-    investigation?.conclusion?.status !==
-    "concluida"
+    protocolId === "ordens-insecta-v1" &&
+    !investigation?.finalizedAt
   ) {
     return null;
   }
 
   if (
-    protocolId === "ordens-insecta-v1" &&
-    !investigation?.finalizedAt
+    protocolId !== "ordens-insecta-v1" &&
+    investigation?.conclusion?.status !== "concluida"
   ) {
     return null;
   }

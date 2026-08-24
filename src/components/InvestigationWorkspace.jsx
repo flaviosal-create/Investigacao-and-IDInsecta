@@ -109,6 +109,7 @@ export function InvestigationWorkspace({
             onStartNewInvestigation={onStartNewInvestigation}
             archivedInvestigations={archivedInvestigations}
             onRestoreArchivedInvestigation={onRestoreArchivedInvestigation}
+            onStartSuggestedProtocol={onStartSuggestedProtocol}
           />
         );
       case "calibracao":
@@ -285,6 +286,7 @@ function WorkspaceReportPanel({
   onStartNewInvestigation,
   archivedInvestigations = [],
   onRestoreArchivedInvestigation,
+  onStartSuggestedProtocol,
 }) {
   const [downloadStatus, setDownloadStatus] = useState("");
   const [snapshotStatus, setSnapshotStatus] = useState("");
@@ -400,6 +402,21 @@ function WorkspaceReportPanel({
               </button>
             </div>
           ))}
+        </section>
+      ) : null}
+
+      {report.nextProtocol ? (
+        <section className="report-next-investigation">
+          <span className="report-label">Próximo aprofundamento</span>
+          <strong>{report.nextProtocol.name}</strong>
+          <p>{report.nextProtocol.reason}</p>
+          <button
+            className="primary-action-button"
+            type="button"
+            onClick={() => onStartSuggestedProtocol(report.nextProtocol.nextProtocol)}
+          >
+            Investigar famílias de Coleoptera
+          </button>
         </section>
       ) : null}
 

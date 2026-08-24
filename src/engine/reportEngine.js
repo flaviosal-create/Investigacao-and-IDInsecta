@@ -70,6 +70,9 @@ export function generateReport(
         ? investigation.suggestion ?? null
         : null,
 
+    nextProtocol:
+      investigation.nextProtocol ?? null,
+
     generatedAt:
       new Date().toISOString(),
 

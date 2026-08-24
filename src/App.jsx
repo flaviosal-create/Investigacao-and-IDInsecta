@@ -39,6 +39,19 @@ export default function App() {
     getProtocolMetadata,
     addLocalProtocol,
   } = useProtocolSelection();
+  const protocoloInsectaId = "ordens-insecta-v1";
+  const dominiosDisponiveis = domains.filter(
+    (domain) => domain.id === "zoologia",
+  );
+  const protocolosInsecta = domainProtocols.filter(
+    (protocol) => protocol.id === protocoloInsectaId,
+  );
+  const gruposInsecta = groupedProtocols
+    .map(([label, items]) => [
+      label,
+      items.filter((protocol) => protocol.id === protocoloInsectaId),
+    ])
+    .filter(([, items]) => items.length > 0);
   const {
     investigation,
     report,
@@ -120,16 +133,14 @@ export default function App() {
             </div>
 
             <SidebarContextPanel
-              domains={domains}
+              domains={dominiosDisponiveis}
               selectedDomainId={
                 selectedDomainId
               }
               onDomainChange={
                 setSelectedDomainId
               }
-              groupedProtocols={
-                groupedProtocols
-              }
+              groupedProtocols={gruposInsecta}
               selectedProtocolId={
                 selectedProtocolId
               }
@@ -139,9 +150,7 @@ export default function App() {
               selectedProtocol={
                 selectedProtocol
               }
-              domainProtocols={
-                domainProtocols
-              }
+              domainProtocols={protocolosInsecta}
               getProtocolMetadata={getProtocolMetadata}
               actions={
                 <div className="start-actions">
@@ -156,13 +165,6 @@ export default function App() {
                     }}
                   >
                     Investigar
-                  </button>
-                  <button
-                    className="secondary-button"
-                    type="button"
-                    onClick={() => setActivePage("insecta-key")}
-                  >
-                    Chave para Ordens de Insecta
                   </button>
                   <button
                     className="secondary-button"

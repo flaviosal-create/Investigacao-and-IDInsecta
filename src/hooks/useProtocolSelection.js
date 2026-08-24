@@ -10,8 +10,8 @@ import {
 } from "../utils/localProtocolCatalog.js";
 
 export function useProtocolSelection() {
-  const [selectedDomainId, setSelectedDomainId] = useState(domains[0].id);
-  const [selectedProtocolId, setSelectedProtocolId] = useState(protocols[0].id);
+  const [selectedDomainId, setSelectedDomainId] = useState("zoologia");
+  const [selectedProtocolId, setSelectedProtocolId] = useState("ordens-insecta-v1");
   const [localProtocols, setLocalProtocols] = useState(loadLocalProtocols);
   const allProtocols = useMemo(
     () => [...protocols, ...localProtocols],

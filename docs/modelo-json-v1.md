@@ -1,0 +1,6 @@
+{
+  "investigacao": {},
+  "protocolo": {},
+  "hipotese": {},
+  "observacao": {}
+}

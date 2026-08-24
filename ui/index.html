@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>LABSED Investigação</title>
+    <link
+      rel="stylesheet"
+      href="./styles.css"
+    />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <h1>LABSED Investigação</h1>
+          <p>
+            Plataforma educacional baseada
+            em observação, evidência e
+            sustentação de hipóteses.
+          </p>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Contexto</h2>
+          </div>
+
+          <label class="field">
+            <span>Domínio</span>
+            <select
+              id="domain-select"
+            ></select>
+          </label>
+
+          <label class="field">
+            <span>Protocolo</span>
+            <select
+              id="protocol-select"
+            ></select>
+          </label>
+
+          <div class="protocol-meta">
+            <div class="protocol-tags">
+              <span
+                id="protocol-track-name"
+                class="protocol-tag"
+              ></span>
+              <span
+                id="protocol-stage"
+                class="protocol-tag is-stage"
+              ></span>
+            </div>
+            <p id="protocol-description"></p>
+            <p
+              id="protocol-orientation"
+              class="protocol-orientation"
+            ></p>
+            <div
+              id="protocol-trail"
+              class="protocol-trail"
+            ></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Leitura rápida</h2>
+          </div>
+
+          <dl class="summary-grid">
+            <div>
+              <dt>Observações</dt>
+              <dd id="summary-observations">
+                0
+              </dd>
+            </div>
+            <div>
+              <dt>Hipótese líder</dt>
+              <dd id="summary-leader">
+                -
+              </dd>
+            </div>
+            <div>
+              <dt>Confiança</dt>
+              <dd id="summary-confidence">
+                -
+              </dd>
+              <p
+                id="summary-confidence-hint"
+                class="summary-hint"
+              >
+                Registre observações para iniciar a leitura de confiança.
+              </p>
+            </div>
+            <div>
+              <dt>Margem</dt>
+              <dd id="summary-margin">
+                -
+              </dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="workspace-top">
+          <section class="panel investigation-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Investigar</h2>
+                <p>
+                  Registre observações e
+                  acompanhe como elas
+                  reordenam as hipóteses.
+                </p>
+              </div>
+              <button
+                id="reset-button"
+                class="secondary-button"
+                type="button"
+              >
+                Reiniciar
+              </button>
+            </div>
+
+            <div
+              id="observation-form"
+              class="observation-grid"
+            ></div>
+          </section>
+
+          <section class="panel observations-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Observações atuais</h2>
+                <p>
+                  Uma observação por
+                  estrutura. Repetir a
+                  estrutura substitui o
+                  valor anterior.
+                </p>
+              </div>
+            </div>
+
+            <div
+              id="observations-empty"
+              class="empty-state"
+            >
+              Nenhuma observação
+              registrada.
+            </div>
+
+            <ul
+              id="observations-list"
+              class="observation-list"
+            ></ul>
+          </section>
+        </section>
+
+        <section class="workspace-bottom">
+          <section class="panel ranking-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Hipóteses</h2>
+                <p>
+                  Ranking atualizado a
+                  cada nova observação.
+                </p>
+              </div>
+            </div>
+
+            <div
+              id="hypotheses-empty"
+              class="empty-state"
+            >
+              Registre observações para
+              calcular hipóteses.
+            </div>
+
+            <div
+              id="hypotheses-list"
+              class="hypothesis-list"
+            ></div>
+          </section>
+
+          <section class="insights-column">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Escopo do Protocolo</h2>
+                </div>
+              </div>
+
+              <div
+                id="next-protocol-card"
+                class="insight-card"
+              ></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Próxima observação</h2>
+                </div>
+              </div>
+
+              <div
+                id="suggestion-card"
+                class="insight-card"
+              ></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Estado da investigação</h2>
+                </div>
+              </div>
+
+              <div
+                id="conclusion-card"
+                class="insight-card"
+              ></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Relatório narrativo</h2>
+                </div>
+              </div>
+
+              <div
+                id="report-card"
+                class="report-card"
+              ></div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script
+      type="module"
+      src="./app.js"
+    ></script>
+  </body>
+</html>

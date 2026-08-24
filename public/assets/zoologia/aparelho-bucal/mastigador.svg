@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">Aparelho bucal mastigador</title>
+  <desc id="desc">Ilustração didática de mandíbulas mastigadoras.</desc>
+  <rect width="900" height="900" fill="#ffffff"/>
+  <text x="450" y="70" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="700" letter-spacing="3">APARELHO BUCAL MASTIGADOR</text>
+  <path d="M280 260 C160 330 155 555 310 645 C370 555 365 375 280 260 Z" fill="#d8872d" stroke="#3c2410" stroke-width="6"/>
+  <path d="M620 260 C740 330 745 555 590 645 C530 555 535 375 620 260 Z" fill="#d8872d" stroke="#3c2410" stroke-width="6"/>
+  <path d="M315 245 L365 310 L330 320 L372 365 L335 374 L380 430" fill="none" stroke="#3c2410" stroke-width="8" stroke-linecap="round"/>
+  <path d="M585 245 L535 310 L570 320 L528 365 L565 374 L520 430" fill="none" stroke="#3c2410" stroke-width="8" stroke-linecap="round"/>
+  <path d="M345 585 Q450 670 555 585 Q530 735 450 765 Q370 735 345 585 Z" fill="#f0bf74" stroke="#3c2410" stroke-width="5"/>
+  <path d="M355 430 Q450 380 545 430 L510 515 Q450 545 390 515 Z" fill="#f5d49c" stroke="#3c2410" stroke-width="5"/>
+  <line x1="710" y1="315" x2="620" y2="345" stroke="#111" stroke-width="5"/>
+  <polygon points="620,345 642,326 650,352" fill="#111"/>
+  <text x="725" y="326" font-family="Georgia, serif" font-size="30">MANDÍBULAS</text>
+</svg>

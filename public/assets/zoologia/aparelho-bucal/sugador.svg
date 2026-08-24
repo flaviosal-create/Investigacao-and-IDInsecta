@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">Aparelho bucal sugador</title>
+  <desc id="desc">Ilustração didática de probóscide enrolada.</desc>
+  <rect width="900" height="900" fill="#ffffff"/>
+  <text x="450" y="70" text-anchor="middle" font-family="Georgia, serif" font-size="38" font-weight="700" letter-spacing="4">APARELHO BUCAL SUGADOR</text>
+  <path d="M355 185 Q450 135 545 185 L520 270 Q450 310 380 270 Z" fill="#f2c982" stroke="#4a2d12" stroke-width="5"/>
+  <path d="M450 260 C550 430 510 555 405 560 C290 565 270 700 380 725 C505 755 610 635 520 545 C455 480 370 525 390 605 C405 660 480 655 480 605 C480 570 435 575 438 610" fill="none" stroke="#c98d2f" stroke-width="32" stroke-linecap="round"/>
+  <path d="M450 260 C550 430 510 555 405 560 C290 565 270 700 380 725 C505 755 610 635 520 545 C455 480 370 525 390 605 C405 660 480 655 480 605 C480 570 435 575 438 610" fill="none" stroke="#5d3511" stroke-width="5" stroke-linecap="round"/>
+  <line x1="650" y1="430" x2="540" y2="465" stroke="#111" stroke-width="5"/>
+  <polygon points="540,465 562,446 568,473" fill="#111"/>
+  <text x="665" y="438" font-family="Georgia, serif" font-size="30">PROBÓSCIDE</text>
+</svg>

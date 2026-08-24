@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">Aparelho bucal lambedor</title>
+  <desc id="desc">Ilustração didática de lobos labiais.</desc>
+  <rect width="900" height="900" fill="#ffffff"/>
+  <text x="450" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="700" letter-spacing="5">APARELHO BUCAL LAMBEDOR</text>
+  <path d="M400 170 H500 Q525 260 495 395 H405 Q375 260 400 170 Z" fill="#f2c982" stroke="#4a2d12" stroke-width="5"/>
+  <path d="M405 390 C310 470 280 620 355 660 C420 695 455 625 450 540 C445 625 480 695 545 660 C620 620 590 470 495 390 Z" fill="#e7ac55" stroke="#4a2d12" stroke-width="5"/>
+  <path d="M345 610 Q395 575 440 625 M560 610 Q505 575 462 625" fill="none" stroke="#9b641f" stroke-width="6"/>
+  <path d="M360 640 Q405 610 440 650 M540 640 Q500 610 462 650" fill="none" stroke="#9b641f" stroke-width="6"/>
+  <line x1="680" y1="650" x2="555" y2="615" stroke="#111" stroke-width="5"/>
+  <polygon points="555,615 582,609 575,636" fill="#111"/>
+  <text x="695" y="662" font-family="Arial, sans-serif" font-size="30">LOBOS LABIAIS</text>
+</svg>

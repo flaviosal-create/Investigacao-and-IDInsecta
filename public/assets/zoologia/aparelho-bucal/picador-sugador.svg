@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+  <title id="title">Aparelho bucal picador-sugador</title>
+  <desc id="desc">Ilustração didática de rostro com estiletes.</desc>
+  <rect width="900" height="900" fill="#ffffff"/>
+  <text x="450" y="70" text-anchor="middle" font-family="Georgia, serif" font-size="36" font-weight="700" letter-spacing="2">APARELHO BUCAL PICADOR-SUGADOR</text>
+  <path d="M325 180 Q450 125 575 180 L555 260 Q450 300 345 260 Z" fill="#f2c982" stroke="#4a2d12" stroke-width="5"/>
+  <path d="M365 260 L430 790" fill="none" stroke="#b77825" stroke-width="20" stroke-linecap="round"/>
+  <path d="M450 260 L450 815" fill="none" stroke="#7a4818" stroke-width="14" stroke-linecap="round"/>
+  <path d="M535 260 L470 790" fill="none" stroke="#d89b38" stroke-width="20" stroke-linecap="round"/>
+  <path d="M405 265 L435 830" fill="none" stroke="#4a2d12" stroke-width="4"/>
+  <path d="M495 265 L465 830" fill="none" stroke="#4a2d12" stroke-width="4"/>
+  <line x1="615" y1="505" x2="500" y2="520" stroke="#111" stroke-width="5"/>
+  <polygon points="500,520 525,505 528,532" fill="#111"/>
+  <text x="630" y="518" font-family="Georgia, serif" font-size="28">ROSTRO / ESTILETES</text>
+</svg>

@@ -1,0 +1,25 @@
+/* Toast individual - estilos complementares */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md, 12px);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideInToast 0.3s ease-out;
+  pointer-events: auto;
+  line-height: 1.4;
+}
+
+@keyframes slideInToast {
+  from {
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

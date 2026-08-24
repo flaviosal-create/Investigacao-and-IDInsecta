@@ -19,6 +19,19 @@ export function formatInvestigationReport(
           (entry) => `- ${describeHistoryEntry(entry)}`
         )
       : ["- Nenhuma etapa registrada."];
+  const hypotheses =
+    report.hypotheses?.length > 0
+      ? report.hypotheses.flatMap((hypothesis) => [
+          `- #${hypothesis.rank ?? "-"} ${hypothesis.name}: score ${hypothesis.score ?? 0}; confiança ${hypothesis.confidence?.label ?? "-"}.`,
+          ...(hypothesis.evidences?.length
+            ? [
+                `  Evidências favoráveis: ${hypothesis.evidences
+                  .map((evidence) => `${evidence.structure} = ${evidence.value}`)
+                  .join(", ")}.`,
+              ]
+            : []),
+        ])
+      : ["- Nenhuma hipótese calculada."];
 
   return [
     "LABSED Investigação",
@@ -34,6 +47,9 @@ export function formatInvestigationReport(
     `Confiança: ${report.confidence ?? "-"}`,
     `Estado: ${report.conclusion?.reason ?? "Em andamento."}`,
     `Decisão: ${report.decision?.reason ?? "Sem decisão registrada."}`,
+    "",
+    "Hipóteses geradas",
+    ...hypotheses,
     "",
     "Percurso investigativo",
     ...history,

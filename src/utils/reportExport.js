@@ -6,6 +6,8 @@ export function formatInvestigationReport(
     return null;
   }
 
+  const hasObservations = report.observations.length > 0;
+
   const observations =
     report.observations.length > 0
       ? report.observations.map(
@@ -20,7 +22,7 @@ export function formatInvestigationReport(
         )
       : ["- Nenhuma etapa registrada."];
   const hypotheses =
-    report.hypotheses?.length > 0
+    report.observations.length > 0 && report.hypotheses?.length > 0
       ? report.hypotheses.flatMap((hypothesis) => [
           `- #${hypothesis.rank ?? "-"} ${hypothesis.name}: score ${hypothesis.score ?? 0}; confiança ${hypothesis.confidence?.label ?? "-"}.`,
           ...(hypothesis.evidences?.length
@@ -42,11 +44,11 @@ export function formatInvestigationReport(
     ...observations,
     "",
     "Síntese",
-    `Hipótese líder: ${report.leadingHypothesis ?? "-"}`,
-    `Hipótese concorrente: ${report.competingHypothesis ?? "-"}`,
-    `Confiança: ${report.confidence ?? "-"}`,
-    `Estado: ${report.conclusion?.reason ?? "Em andamento."}`,
-    `Decisão: ${report.decision?.reason ?? "Sem decisão registrada."}`,
+    `Hipótese líder: ${hasObservations ? report.leadingHypothesis ?? "-" : "-"}`,
+    `Hipótese concorrente: ${hasObservations ? report.competingHypothesis ?? "-" : "-"}`,
+    `Confiança: ${hasObservations ? report.confidence ?? "-" : "-"}`,
+    `Estado: ${hasObservations ? report.conclusion?.reason ?? "Em andamento." : "Nenhuma observação foi registrada ainda."}`,
+    `Decisão: ${hasObservations ? report.decision?.reason ?? "Sem decisão registrada." : "Registre ao menos uma observação antes de interpretar as hipóteses."}`,
     "",
     "Hipóteses geradas",
     ...hypotheses,
@@ -55,7 +57,9 @@ export function formatInvestigationReport(
     ...history,
     "",
     "Narrativa",
-    report.narrative,
+    hasObservations
+      ? report.narrative
+      : "A investigação foi iniciada, mas ainda não possui observações registradas.",
     "",
     "Este relatório descreve a investigação dentro do universo de hipóteses do protocolo selecionado.",
   ].join("\n");

@@ -67,3 +67,26 @@ test(
     );
   }
 );
+
+test(
+  "nao cria hipótese líder quando não há observações",
+  () => {
+    const emptyReport = {
+      ...report,
+      observations: [],
+      hypotheses: [
+        {
+          rank: 1,
+          name: "Coleoptera",
+          score: 0,
+          confidence: { label: "Evidência insuficiente" },
+        },
+      ],
+    };
+
+    const content = formatInvestigationReport(emptyReport, protocol);
+
+    assert.match(content, /Hipótese líder: -/);
+    assert.match(content, /Nenhuma hipótese calculada/);
+  }
+);

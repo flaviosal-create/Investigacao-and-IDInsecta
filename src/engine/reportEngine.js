@@ -1,11 +1,13 @@
 export function generateReport(
   investigation
 ) {
-  const leader =
-    investigation.hypotheses?.[0];
+  const hasObservations = investigation.observations.length > 0;
+  const hypotheses = hasObservations
+    ? investigation.hypotheses ?? []
+    : [];
+  const leader = hypotheses[0];
 
-  const runnerUp =
-    investigation.hypotheses?.[1];
+  const runnerUp = hypotheses[1];
 
   return {
     protocolId:
@@ -21,7 +23,7 @@ export function generateReport(
       investigation.observations,
 
     hypotheses:
-      investigation.hypotheses ?? [],
+      hypotheses,
 
     history:
       investigation.history ?? [],
@@ -37,16 +39,25 @@ export function generateReport(
       null,
 
     conclusion:
-      investigation.conclusion ??
-      null,
+      hasObservations
+        ? investigation.conclusion ?? null
+        : {
+            status: "em_andamento",
+            reason: "Nenhuma observação foi registrada ainda.",
+          },
 
     decision:
-      investigation.decision ??
-      null,
+      hasObservations
+        ? investigation.decision ?? null
+        : {
+            status: "sem_dados",
+            reason: "Registre ao menos uma observação antes de interpretar as hipóteses.",
+          },
 
     interpretation:
-      investigation.interpretation ??
-      null,
+      hasObservations
+        ? investigation.interpretation ?? null
+        : null,
 
     leadingMargin:
       leader?.margin ?? null,
@@ -55,8 +66,9 @@ export function generateReport(
       runnerUp?.name ?? null,
 
     suggestion:
-      investigation.suggestion ??
-      null,
+      hasObservations
+        ? investigation.suggestion ?? null
+        : null,
 
     generatedAt:
       new Date().toISOString(),
@@ -64,6 +76,7 @@ export function generateReport(
     narrative:
       buildNarrative(
         investigation,
+        hasObservations,
         leader,
         runnerUp
       ),
@@ -72,10 +85,15 @@ export function generateReport(
 
 function buildNarrative(
   investigation,
+  hasObservations,
   leader,
   runnerUp
 ) {
   const lines = [];
+
+  if (!hasObservations) {
+    return "A investigação foi iniciada dentro de um universo específico de hipóteses, mas ainda não possui observações registradas. Registre uma característica observável para gerar a primeira leitura.";
+  }
 
   lines.push(
     "Investigação iniciada dentro de um universo específico de hipóteses."

@@ -9,6 +9,12 @@ export function SuggestionCard({
   report,
   onJump,
 }) {
+  const suggestion = investigation?.suggestion ?? report?.suggestion;
+
+  if (!suggestion) {
+    return null;
+  }
+
   const leader =
     investigation.hypotheses?.[0] ?? null;
   const runnerUp =
@@ -25,19 +31,19 @@ export function SuggestionCard({
       </span>
       <strong>
         {formatStructure(
-          investigation.suggestion.structure
+          suggestion.structure
         )}
       </strong>
       <p className="suggestion-focus">
         {suggestionMode.focus}
       </p>
-      <p>{report.suggestion.reason}</p>
+      <p>{report?.suggestion?.reason ?? suggestion.reason}</p>
       <p className="suggestion-context">
         {buildSuggestionContext({
           leader,
           runnerUp,
           suggestion:
-            investigation.suggestion,
+            suggestion,
         })}
       </p>
       <button
@@ -45,8 +51,7 @@ export function SuggestionCard({
         className="secondary-button next-step-button"
         onClick={() =>
           onJump(
-            investigation.suggestion
-              .structure
+            suggestion.structure
           )
         }
       >

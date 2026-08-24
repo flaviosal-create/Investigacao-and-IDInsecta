@@ -11,6 +11,12 @@ export function generateReport(
     protocolId:
       investigation.protocolId,
 
+    isFinalized:
+      Boolean(investigation.finalizedAt),
+
+    finalizedAt:
+      investigation.finalizedAt ?? null,
+
     observations:
       investigation.observations,
 

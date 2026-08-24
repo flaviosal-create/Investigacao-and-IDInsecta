@@ -3,6 +3,8 @@ import {
   addObservation,
   removeObservation,
   runInvestigation,
+  finalizeInvestigation,
+  reopenInvestigation,
 } from "./investigationEngine.js";
 
 import {
@@ -61,6 +63,20 @@ export function runSession(
         session.protocol
       ),
   };
+}
+
+export function finalizeSession(session) {
+  return runSession({
+    ...session,
+    investigation: finalizeInvestigation(session.investigation),
+  });
+}
+
+export function reopenSession(session) {
+  return runSession({
+    ...session,
+    investigation: reopenInvestigation(session.investigation),
+  });
 }
 
 export function generateSessionReport(

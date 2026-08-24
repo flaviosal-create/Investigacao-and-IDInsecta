@@ -150,6 +150,38 @@ export function removeObservation(
   };
 }
 
+export function finalizeInvestigation(investigation) {
+  if (investigation.finalizedAt) {
+    return investigation;
+  }
+
+  const finalizedAt = new Date().toISOString();
+
+  return {
+    ...investigation,
+    status: "finalized",
+    finalizedAt,
+    history: [
+      ...investigation.history,
+      { type: "investigation-finalized", timestamp: finalizedAt },
+    ],
+    updatedAt: finalizedAt,
+  };
+}
+
+export function reopenInvestigation(investigation) {
+  if (!investigation.finalizedAt) {
+    return investigation;
+  }
+
+  return {
+    ...investigation,
+    status: "started",
+    finalizedAt: null,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 /**
  * Executa uma rodada de investigação.
  */

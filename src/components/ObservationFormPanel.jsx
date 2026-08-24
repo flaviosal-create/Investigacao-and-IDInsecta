@@ -13,6 +13,7 @@ export function ObservationFormPanel({
   onReset,
   onRegisterObservation,
   onUnregisterObservation,
+  isFinalized = false,
 }) {
   const observations =
     selectedProtocol?.observations ?? [];
@@ -54,12 +55,19 @@ export function ObservationFormPanel({
             className="secondary-button"
             type="button"
             onClick={handleReset}
-            disabled={!hasObservations}
+            disabled={!hasObservations || isFinalized}
           >
             Reiniciar
           </button>
         }
       />
+
+      {isFinalized ? (
+        <p className="investigation-finalized-notice" role="status">
+          Investigação encerrada pelo aluno. Reabra o relatório para registrar
+          novas observações.
+        </p>
+      ) : null}
 
       <p
         className="investigation-progress"
@@ -206,6 +214,7 @@ export function ObservationFormPanel({
                             aria-pressed={
                               isActive
                             }
+                            disabled={isFinalized}
                             onClick={() => {
                               if (isActive) {
                                 onUnregisterObservation(
@@ -237,6 +246,7 @@ export function ObservationFormPanel({
                     <button
                       className="clear-observation-button"
                       type="button"
+                      disabled={isFinalized}
                       onClick={() => {
                         onUnregisterObservation(
                           observation.structure

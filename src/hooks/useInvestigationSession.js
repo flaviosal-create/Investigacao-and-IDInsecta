@@ -5,6 +5,8 @@ import {
   removeSessionObservation,
   runSession,
   generateSessionReport,
+  finalizeSession,
+  reopenSession,
 } from "../engine/sessionEngine.js";
 import {
   clearPersistedSession,
@@ -161,6 +163,22 @@ export function useInvestigationSession(
     }
   }
 
+  function finalizeInvestigationSession() {
+    setSession((currentSession) =>
+      currentSession ? finalizeSession(currentSession) : currentSession
+    );
+    setSessionNotice(
+      "Investigação encerrada pelo aluno. O relatório final foi gerado."
+    );
+  }
+
+  function reopenInvestigationSession() {
+    setSession((currentSession) =>
+      currentSession ? reopenSession(currentSession) : currentSession
+    );
+    setSessionNotice("Investigação reaberta para novas observações.");
+  }
+
   return {
     session,
     investigation,
@@ -171,5 +189,7 @@ export function useInvestigationSession(
     unregisterObservation,
     resetSession,
     loadObservations,
+    finalizeInvestigation: finalizeInvestigationSession,
+    reopenInvestigation: reopenInvestigationSession,
   };
 }

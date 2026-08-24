@@ -28,6 +28,8 @@ export function createInvestigation({
 
     status: "started",
 
+    finalizedAt: null,
+
     observations: [],
 
     hypotheses: [],

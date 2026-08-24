@@ -17,6 +17,10 @@ function describeEntry(entry) {
       : "Hipóteses atualizadas.";
   }
 
+  if (entry.type === "investigation-finalized") {
+    return "Investigação encerrada pelo aluno.";
+  }
+
   return "Etapa da investigação registrada.";
 }
 

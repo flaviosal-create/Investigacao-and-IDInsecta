@@ -15,6 +15,14 @@ export function InvestigationReportDocument({
   const hypotheses = report.hypotheses ?? [];
   const statusMeta = getConclusionStatusMeta(report.conclusion?.status);
   const decisionMeta = getDecisionStatusMeta(report.decision?.status);
+  const displayedStatusMeta = report.isFinalized
+    ? {
+        label: "Encerrada pelo aluno",
+        title: "A investigação foi encerrada pelo aluno",
+        className: "is-success",
+        summary: "Este relatório registra a leitura no momento em que o aluno decidiu encerrar a investigação.",
+      }
+    : statusMeta;
 
   return (
     <article className="investigation-report-document">
@@ -53,7 +61,7 @@ export function InvestigationReportDocument({
         </div>
         <div>
           <span>Estado</span>
-          <strong>{statusMeta.label}</strong>
+          <strong>{displayedStatusMeta.label}</strong>
         </div>
       </section>
 
@@ -61,11 +69,11 @@ export function InvestigationReportDocument({
         <div className="investigation-report-section-heading">
           <span className="report-label">Estado atual</span>
           <span className={`insight-badge ${statusMeta.className}`}>
-            {statusMeta.label}
+            {displayedStatusMeta.label}
           </span>
         </div>
-        <h4>{statusMeta.title}</h4>
-        <p>{report.conclusion?.reason ?? statusMeta.summary}</p>
+        <h4>{displayedStatusMeta.title}</h4>
+        <p>{report.isFinalized ? displayedStatusMeta.summary : report.conclusion?.reason ?? statusMeta.summary}</p>
         <div className="report-decision">
           <span className="report-label">Próxima decisão</span>
           <strong>{decisionMeta.title}</strong>

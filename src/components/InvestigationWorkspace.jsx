@@ -64,6 +64,8 @@ export function InvestigationWorkspace({
   onHighlightStructure,
   onBackToUniverse,
   onStartSuggestedProtocol,
+  onFinalizeInvestigation,
+  onReopenInvestigation,
 }) {
   const tabListRef = useRef(null);
   const hasThermometerSpace =
@@ -99,6 +101,8 @@ export function InvestigationWorkspace({
             report={report}
             selectedProtocol={selectedProtocol}
             onLoadObservations={onLoadObservations}
+            onFinalizeInvestigation={onFinalizeInvestigation}
+            onReopenInvestigation={onReopenInvestigation}
           />
         );
       case "calibracao":
@@ -119,6 +123,7 @@ export function InvestigationWorkspace({
             onReset={onReset}
             onRegisterObservation={onRegisterObservation}
             onUnregisterObservation={onUnregisterObservation}
+            isFinalized={report?.isFinalized}
             onHighlightStructure={onHighlightStructure}
             onStartSuggestedProtocol={onStartSuggestedProtocol}
           />
@@ -269,6 +274,8 @@ function WorkspaceReportPanel({
   report,
   selectedProtocol,
   onLoadObservations,
+  onFinalizeInvestigation,
+  onReopenInvestigation,
 }) {
   const [downloadStatus, setDownloadStatus] = useState("");
   const [snapshotStatus, setSnapshotStatus] = useState("");
@@ -329,6 +336,35 @@ function WorkspaceReportPanel({
         report={report}
         selectedProtocol={selectedProtocol}
       />
+
+      <div className="report-finalization-actions">
+        {report.isFinalized ? (
+          <>
+            <p className="investigation-finalized-notice" role="status">
+              Relatório finalizado pelo aluno em {formatFinalizedDate(report.finalizedAt)}.
+            </p>
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={onReopenInvestigation}
+            >
+              Reabrir investigação
+            </button>
+          </>
+        ) : (
+          <button
+            className="primary-action-button"
+            type="button"
+            onClick={() => {
+              if (window.confirm("Encerrar esta investigação com as hipóteses e observações atuais?")) {
+                onFinalizeInvestigation();
+              }
+            }}
+          >
+            Encerrar investigação
+          </button>
+        )}
+      </div>
 
       <button
         className="secondary-button"
@@ -393,6 +429,7 @@ function WorkspaceFocusPanel({
   onUnregisterObservation,
   onHighlightStructure,
   onStartSuggestedProtocol,
+  isFinalized,
 }) {
   return (
     <section className="workspace-focus-grid">
@@ -403,6 +440,7 @@ function WorkspaceFocusPanel({
         onReset={onReset}
         onRegisterObservation={onRegisterObservation}
         onUnregisterObservation={onUnregisterObservation}
+        isFinalized={isFinalized}
       />
 
       <section className="insights-column">
@@ -450,4 +488,14 @@ function WorkspaceFocusPanel({
       </section>
     </section>
   );
+}
+
+function formatFinalizedDate(date) {
+  if (!date) return "-";
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return "-";
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(parsed);
 }

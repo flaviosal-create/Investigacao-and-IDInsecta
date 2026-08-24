@@ -5,6 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     strictPort: true,
+    hmr: false,
+  },
+  optimizeDeps: {
+    force: true,
   },
   resolve: {
     dedupe: ["react", "react-dom"],

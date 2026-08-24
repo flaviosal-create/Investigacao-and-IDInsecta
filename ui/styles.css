@@ -2893,3 +2893,83 @@ button:disabled {
 .app-shell-investigar .page-kicker {
   color: #3d4d44;
 }
+
+.app-shell-investigar .observation-card,
+.app-shell-investigar .observation-item,
+.app-shell-investigar .hypothesis-card,
+.app-shell-investigar .hypothesis-overview,
+.app-shell-investigar .visual-card-frame,
+.app-shell-investigar .thermometer-order {
+  border-color: #d8e3df;
+  background: #fbfdfc;
+  border-radius: 12px;
+}
+
+.app-shell-investigar .observation-card-toggle-state,
+.app-shell-investigar .clear-observation-button,
+.app-shell-investigar .investigation-progress,
+.app-shell-investigar .summary-hint,
+.app-shell-investigar .confidence-note,
+.app-shell-investigar .suggestion-context,
+.app-shell-investigar .card-explainer,
+.app-shell-investigar .meta-group small,
+.app-shell-investigar .confidence-group small,
+.app-shell-investigar .hypothesis-overview-main p,
+.app-shell-investigar .hypothesis-overview-next,
+.app-shell-investigar .thermometer-status {
+  color: #3d4d44;
+}
+
+.app-shell-investigar .hypothesis-overview {
+  background: #f1fbf5;
+}
+
+.app-shell-investigar .hypothesis-overview-main strong,
+.app-shell-investigar .suggestion-focus,
+.app-shell-investigar .thermometer-percent {
+  color: #276749;
+}
+
+.app-shell-investigar .hypothesis-card.is-leading,
+.app-shell-investigar .thermometer-order.is-leading {
+  border-color: #8cbca5;
+  background: #f1fbf5;
+  box-shadow: 0 6px 18px rgba(47, 133, 90, 0.14);
+}
+
+.app-shell-investigar .rank-badge,
+.app-shell-investigar .status-badge.promissora,
+.app-shell-investigar .insight-badge.is-info {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.app-shell-investigar .status-badge,
+.app-shell-investigar .insight-badge,
+.app-shell-investigar .insight-badge.is-neutral {
+  background: #eef5f1;
+  color: #3d4d44;
+}
+
+.app-shell-investigar .teacher-guide-status {
+  border-left-color: #8cbca5;
+}
+
+.app-shell-investigar .generic-thermometer-icon rect,
+.app-shell-investigar .generic-thermometer-icon circle {
+  stroke: #4f8067;
+}
+
+.app-shell-investigar .thermometer-order {
+  --order-color: #77b893;
+}
+
+.app-shell-investigar .thermometer-order.is-developing {
+  --order-color: #77b893;
+}
+
+.app-shell-investigar .insect-thermometer-icon ellipse,
+.app-shell-investigar .insect-thermometer-icon circle,
+.app-shell-investigar .insect-thermometer-icon path {
+  stroke: #244b3d;
+}

@@ -18,7 +18,7 @@ export default function App() {
   const [
     activePage,
     setActivePage,
-  ] = useState("universo");
+  ] = useState("insecta-key");
   const [
     activeInvestigationPanel,
     setActiveInvestigationPanel,

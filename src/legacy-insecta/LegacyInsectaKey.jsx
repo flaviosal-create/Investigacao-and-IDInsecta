@@ -40,9 +40,6 @@ export default function LegacyInsectaKey({ onBack, onStartInvestigative }) {
   if (screen === "config") {
     return (
       <div className="legacy-insecta-page">
-        <button className="legacy-back-button" type="button" onClick={onBack}>
-          ← Voltar ao universo de investigação
-        </button>
         <ConfigurarSessao
           mode="pratica"
           aluno=""
@@ -53,7 +50,6 @@ export default function LegacyInsectaKey({ onBack, onStartInvestigative }) {
             setScreen("key");
           }}
           onStartPesquisador={() => onStartInvestigative?.()}
-          onBack={onBack}
         />
       </div>
     );

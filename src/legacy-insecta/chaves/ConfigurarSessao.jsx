@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { chavesConfig } from "./config/chavesConfig.js";
 import LabBioMark from "../components/LabBioMark.jsx";
-import LogoMark from "../components/LogoMark.jsx";
 
 export default function ConfigurarSessao({
   mode,
@@ -39,15 +38,8 @@ export default function ConfigurarSessao({
     <div className="config-sessao-page" style={container} data-testid="configurar-sessao-page">
       <section className="surface config-sessao-hero" style={hero}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
-          <LogoMark />
+          <LabBioMark />
         </div>
-
-        <h2 style={titulo}>Chave de Identificação de Insetos</h2>
-        <p style={subtitulo}>
-          {isProva
-            ? "Configure a avaliação antes de liberar a chave para o aluno."
-            : "Escolha uma entrada rápida ou inicie pela chave de ordens."}
-        </p>
 
         {isProva ? (
           <ConfiguracaoProvaCard
@@ -72,34 +64,19 @@ export default function ConfigurarSessao({
         </button>
 
         {!isProva ? (
-          <>
-            <button
-              className="config-sessao-action-card"
-              data-testid="config-start-artropodes"
-              onClick={() => onStartArtropode?.(mode, aluno, 1)}
-            >
-              <span>Bônus: Chave de Artrópodes</span>
-              <small>separar insetos de outros artrópodes</small>
-            </button>
-
-            <button
-              className="config-sessao-action-card"
-              data-testid="config-start-pesquisador"
-              onClick={() => onStartPesquisador?.("pesquisador", aluno, 1)}
-            >
-              <span>Modo Investigativo</span>
-              <small>levantar hipóteses por características observadas</small>
-            </button>
-          </>
+          <button
+            className="config-sessao-action-card"
+            data-testid="config-start-pesquisador"
+            onClick={() => onStartPesquisador?.("pesquisador", aluno, 1)}
+          >
+            <span>Modo Investigativo</span>
+            <small>abrir o fluxo investigativo do LABSED</small>
+          </button>
         ) : (
           <div style={bloqueioProva}>
             Na prova, o modo investigativo e a chave de artrópodes ficam bloqueados.
           </div>
         )}
-
-        <button className="btn btn--secondary btn--compact" style={btnVoltar} onClick={onBack}>
-          Voltar
-        </button>
 
         <div style={assinaturaLab}>
           <LabBioMark compact />

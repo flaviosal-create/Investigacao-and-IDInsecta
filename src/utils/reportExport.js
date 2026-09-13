@@ -24,7 +24,7 @@ export function formatInvestigationReport(
   const hypotheses =
     report.observations.length > 0 && report.hypotheses?.length > 0
       ? report.hypotheses.flatMap((hypothesis) => [
-          `- #${hypothesis.rank ?? "-"} ${hypothesis.name}: score ${hypothesis.score ?? 0}; confiança ${hypothesis.confidence?.label ?? "-"}.`,
+          `- #${hypothesis.rank ?? "-"} ${hypothesis.name}: score ${hypothesis.score ?? 0}; sustentação ${(hypothesis.assessment ?? hypothesis.confidence)?.label ?? "-"}; comparação ${hypothesis.comparison?.label ?? "-"}.`,
           ...(hypothesis.evidences?.length
             ? [
                 `  Evidências favoráveis: ${hypothesis.evidences

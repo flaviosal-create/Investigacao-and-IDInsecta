@@ -104,15 +104,18 @@ export function InvestigationReportDocument({
             {hypotheses.map((hypothesis) => (
               <article
                 key={hypothesis.id}
-                className={`investigation-report-hypothesis ${hypothesis.rank === 1 ? "is-leading" : ""}`}
+                className={`investigation-report-hypothesis ${hypothesis.isLeader ? "is-leading" : ""}`}
               >
                 <div className="investigation-report-hypothesis-heading">
                   <div>
                     <span className="report-rank">#{hypothesis.rank}</span>
                     <strong>{hypothesis.name}</strong>
                   </div>
-                  <span className={`status-badge ${hypothesis.confidence.level}`}>
-                    {hypothesis.confidence.label}
+                  <span className={`status-badge ${(hypothesis.assessment ?? hypothesis.confidence).level}`}>
+                    {(hypothesis.assessment ?? hypothesis.confidence).label}
+                  </span>
+                  <span className="hypothesis-comparison">
+                    {hypothesis.comparison?.label}
                   </span>
                 </div>
                 <div className="investigation-report-hypothesis-meta">

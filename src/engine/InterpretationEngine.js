@@ -21,6 +21,16 @@ export function generateInterpretation(
     };
   }
 
+  const tied = investigation.hypotheses.filter((item) => item.score === leader.score);
+  if (tied.length > 1) {
+    return {
+      state: leader.score > 0 ? "em_disputa" : "em_andamento",
+      title: "Sem hipótese líder",
+      summary: `${tied.length} hipóteses têm a mesma sustentação nas observações registradas. Ainda não há evidência para preferir uma delas.`,
+      competition: null,
+    };
+  }
+
   const competition =
     runnerUp
       ? {

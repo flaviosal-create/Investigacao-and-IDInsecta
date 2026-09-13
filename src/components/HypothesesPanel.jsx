@@ -40,13 +40,13 @@ export function HypothesesPanel({
           >
             <div className="hypothesis-overview-main">
               <span className="meta-label">Leitura atual</span>
-              <strong>{leader.confidence.label}</strong>
-              <p>{leader.confidence.description}</p>
+              <strong>{(leader.assessment ?? leader.confidence).label}</strong>
+              <p>{(leader.assessment ?? leader.confidence).description}</p>
             </div>
             <dl className="hypothesis-overview-stats">
               <div>
                 <dt>Hipótese líder</dt>
-                <dd>{leader.name}</dd>
+                <dd>{leader.isLeader ? leader.name : "Sem liderança — hipóteses empatadas"}</dd>
               </div>
               <div>
                 <dt>Margem</dt>
@@ -58,9 +58,9 @@ export function HypothesesPanel({
               </div>
             </dl>
             <p className="hypothesis-overview-next">
-              {runnerUp
+              {leader.isLeader && runnerUp && !runnerUp.isTied
                 ? `Concorrente mais próxima: ${runnerUp.name}.`
-                : "Registre outra observação para comparar hipóteses."}
+                : "Compare o conjunto de hipóteses; hipóteses empatadas não têm preferência entre si."}
             </p>
           </section>
 
@@ -70,7 +70,7 @@ export function HypothesesPanel({
               <article
                 key={hypothesis.id}
                 className={`hypothesis-card ${
-                  index === 0
+                  hypothesis.isLeader
                     ? "is-leading"
                     : ""
                 }`}
@@ -82,7 +82,7 @@ export function HypothesesPanel({
                       {hypothesis.clue ?? ""}
                     </p>
                   </div>
-                  <span className="rank-badge">
+                  <span className="rank-badge" title={hypothesis.comparison?.label}>
                     #{hypothesis.rank}
                   </span>
                 </div>
@@ -118,10 +118,10 @@ export function HypothesesPanel({
                   </div>
                   <div className="confidence-group">
                     <span
-                      className={`status-badge ${hypothesis.confidence.level}`}
+                      className={`status-badge ${(hypothesis.assessment ?? hypothesis.confidence).level}`}
                     >
                       {
-                        hypothesis.confidence
+                        (hypothesis.assessment ?? hypothesis.confidence)
                           .label
                       }
                     </span>
@@ -132,9 +132,10 @@ export function HypothesesPanel({
                   </div>
                 </div>
 
+                <p className="hypothesis-comparison">{hypothesis.comparison?.label}</p>
                 <p className="confidence-note">
                   {
-                    hypothesis.confidence
+                    (hypothesis.assessment ?? hypothesis.confidence)
                       .description
                   }
                 </p>
@@ -241,11 +242,12 @@ export function HypothesesPanel({
                         </strong>
                         <span>
                           {
-                            hypothesis.confidence
+                            (hypothesis.assessment ?? hypothesis.confidence)
                               .label
                           }
                         </span>
                       </div>
+                      <span className="hypothesis-comparison">{hypothesis.comparison?.label}</span>
                       <div className="compact-score">
                         <span>
                           Score{" "}

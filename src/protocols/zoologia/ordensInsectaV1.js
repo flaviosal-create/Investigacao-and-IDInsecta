@@ -9,8 +9,28 @@ const rawOrdensInsectaV1 = {
   "references": referencesInvertebratesV1,
   "pedagogicalNote": "Este protocolo compara hipóteses de ordens de Insecta dentro de um recorte didático. As observações sustentam ou enfraquecem interpretações; não constituem uma chave de identificação.",
   "investigationPolicy": {
+    "scoringMode": "shared-evidence",
     "minimumObservedStructuresForConclusion": 3,
-    "minimumSupportingStructuresForConclusion": 3
+    "minimumSupportingStructuresForConclusion": 3,
+    "allowedConflictEvidence": [
+      {
+        "structure": "asas",
+        "values": [
+          "1_par_funcional",
+          "elitros",
+          "franjadas",
+          "escamas",
+          "pilosas_telhado"
+        ]
+      },
+      {
+        "structure": "corpo",
+        "values": [
+          "graveto_folha",
+          "cercos_pinca"
+        ]
+      }
+    ]
   },
   "observations": [
     {

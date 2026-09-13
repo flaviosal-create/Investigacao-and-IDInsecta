@@ -97,6 +97,7 @@ export const representativeCases = [
   },
   {
     expected: "odonata",
+    expectedTied: ["orthoptera", "odonata"],
     observations: [
       ["antena", "curta"],
       ["asas", "2_pares_membranosos"],
@@ -144,9 +145,7 @@ export const ambiguousCases = [
       ["asas", "elitros"],
       ["corpo", "cintura_estreita"],
     ],
-    expectedLeader: "coleoptera",
-    expectedRunnerUp:
-      "hymenoptera",
+    expectedTied: ["dermaptera", "coleoptera"],
     expectedSuggestion:
       "antena",
     expectedConclusion:
@@ -163,13 +162,11 @@ export const ambiguousCases = [
       ],
       ["corpo", "corpo_mole"],
     ],
-    expectedLeader: "hemiptera",
-    expectedRunnerUp:
-      "thysanoptera",
+    expectedTied: ["diptera", "thysanoptera", "hemiptera"],
     expectedSuggestion:
       "asas",
     expectedConclusion:
-      "em_andamento",
+      "em_disputa",
     expectedDecision:
       "continuar",
   },
@@ -184,11 +181,11 @@ export const mixedCases = [
     ],
     expectedLeader: "blattodea",
     expectedConfidence:
-      "promissora",
+      "inicial",
     expectedDecision:
       "continuar",
     expectedSuggestion:
-      "antena",
+      "corpo",
   },
   {
     id: "hemiptera_incompleto",
@@ -201,11 +198,11 @@ export const mixedCases = [
     ],
     expectedLeader: "hemiptera",
     expectedConfidence:
-      "promissora",
+      "bem_sustentada",
     expectedDecision:
       "continuar",
     expectedSuggestion:
-      "corpo",
+      "antena",
   },
   {
     id: "hymenoptera_incompleto",
@@ -215,11 +212,11 @@ export const mixedCases = [
     ],
     expectedLeader: "hymenoptera",
     expectedConfidence:
-      "inicial",
+      "bem_sustentada",
     expectedDecision:
       "continuar",
     expectedSuggestion:
-      "antena",
+      "aparelho_bucal",
   },
   {
     id: "isoptera_incompleto",
@@ -233,7 +230,7 @@ export const mixedCases = [
     expectedDecision:
       "continuar",
     expectedSuggestion:
-      "aparelho_bucal",
+      "asas",
   },
   {
     id: "mantodea_incompleto",
@@ -243,10 +240,10 @@ export const mixedCases = [
     ],
     expectedLeader: "mantodea",
     expectedConfidence:
-      "promissora",
+      "bem_sustentada",
     expectedDecision:
       "continuar",
     expectedSuggestion:
-      "aparelho_bucal",
+      "corpo",
   },
 ];

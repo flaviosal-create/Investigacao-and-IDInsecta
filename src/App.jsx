@@ -53,7 +53,6 @@ export default function App() {
   const {
     investigation,
     report,
-    sessionNotice,
     activeObservationMap,
     registerObservation,
     unregisterObservation,
@@ -68,7 +67,7 @@ export default function App() {
     selectedProtocol
   );
   const leader =
-    investigation?.hypotheses?.[0] ?? null;
+    investigation?.hypotheses?.find((hypothesis) => hypothesis.isLeader) ?? null;
 
   function highlightStructure(
     structure
@@ -220,7 +219,6 @@ export default function App() {
             }
             investigation={investigation}
             report={report}
-            sessionNotice={sessionNotice}
             leader={leader}
             activePanel={
               activeInvestigationPanel

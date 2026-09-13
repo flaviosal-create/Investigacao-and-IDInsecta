@@ -2,9 +2,80 @@ import {
   formatStructure,
   formatValue,
 } from "../utils/presentation.js";
-import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { useEffect, useId, useRef, useState } from "react";
 import { Panel } from "./ui/Panel.jsx";
 import { PanelHeader } from "./ui/PanelHeader.jsx";
+
+function ObservationDetailsDialog({
+  observation,
+  activeValue,
+  isFinalized,
+  onRegisterObservation,
+  onUnregisterObservation,
+  onDismiss,
+}) {
+  const dialogRef = useRef(null);
+  const titleId = useId();
+  const activeVisualExample = observation.visualExamples?.[activeValue];
+
+  useEffect(() => {
+    if (!dialogRef.current?.open) dialogRef.current?.showModal();
+  }, []);
+
+  function closeDialog() {
+    dialogRef.current?.close();
+  }
+
+  return createPortal(
+    <dialog
+      ref={dialogRef}
+      className="observation-details-dialog"
+      aria-labelledby={titleId}
+      onCancel={(event) => {
+        event.preventDefault();
+        closeDialog();
+      }}
+      onClose={onDismiss}
+    >
+      <header className="observation-details-header">
+        <div>
+          <span>Característica observável</span>
+          <h2 id={titleId}>{observation.label}</h2>
+        </div>
+        <button type="button" className="secondary-button" onClick={closeDialog}>
+          Fechar
+        </button>
+      </header>
+      {activeVisualExample ? (
+        <div className="observation-details-visual">
+          <img src={activeVisualExample.src} alt={activeVisualExample.alt} />
+        </div>
+      ) : null}
+      <div className="observation-details-options" role="group" aria-label={`Opções para ${observation.label}`}>
+        {observation.values.map((value) => {
+          const isActive = activeValue === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              className={`option-button ${isActive ? "is-active" : ""}`}
+              aria-pressed={isActive}
+              disabled={isFinalized}
+              onClick={() => {
+                if (isActive) onUnregisterObservation(observation.structure);
+                else onRegisterObservation({ structure: observation.structure, value });
+              }}
+            >
+              {formatValue(value)}
+            </button>
+          );
+        })}
+      </div>
+    </dialog>,
+    document.body
+  );
+}
 
 export function ObservationFormPanel({
   selectedProtocol,
@@ -23,6 +94,8 @@ export function ObservationFormPanel({
     useState(() => new Set());
   const [statusMessage, setStatusMessage] =
     useState("");
+  const [mobileObservationStructure, setMobileObservationStructure] =
+    useState(null);
   const hasObservations = activeObservationMap.size > 0;
 
   useEffect(() => {
@@ -39,6 +112,16 @@ export function ObservationFormPanel({
       onReset();
       setStatusMessage("Investigação reiniciada. Nenhuma observação está registrada.");
     }
+  }
+
+  function toggleObservation(observation) {
+    if (window.innerWidth <= 720) {
+      setMobileObservationStructure(observation.structure);
+      return;
+    }
+    setOpenStructure((current) =>
+      current === observation.structure ? null : observation.structure
+    );
   }
 
   return (
@@ -120,13 +203,7 @@ export function ObservationFormPanel({
                     openStructure ===
                     observation.structure
                   }
-                  onClick={() => {
-                    setOpenStructure((current) =>
-                      current === observation.structure
-                        ? null
-                        : observation.structure
-                    );
-                  }}
+                  onClick={() => toggleObservation(observation)}
                 >
                   <span className="observation-card-title">
                     <span className="observation-card-heading">
@@ -137,20 +214,17 @@ export function ObservationFormPanel({
                         observation.structure
                       )}
                     </span>
-                    <span className="card-explainer">
-                      Escolha o valor que melhor
-                      descreve o que foi observado.
+                  </span>
+                  {activeVisualExample ? (
+                    <span className="observation-card-selection-thumb" aria-hidden="true">
+                      <img
+                        src={activeVisualExample.src}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </span>
-                  </span>
-                  <span
-                    className="observation-card-toggle-state"
-                    aria-hidden="true"
-                  >
-                    {openStructure ===
-                    observation.structure
-                      ? "Fechar"
-                      : "Abrir"}
-                  </span>
+                  ) : null}
                 </button>
 
                 <div className="observation-card-content">
@@ -242,29 +316,24 @@ export function ObservationFormPanel({
                       }
                     )}
                   </div>
-                  {activeValue ? (
-                    <button
-                      className="clear-observation-button"
-                      type="button"
-                      disabled={isFinalized}
-                      onClick={() => {
-                        onUnregisterObservation(
-                          observation.structure
-                        );
-                        setStatusMessage(
-                          `${observation.label}: observação removida. As hipóteses foram atualizadas.`
-                        );
-                      }}
-                    >
-                      Limpar característica
-                    </button>
-                  ) : null}
                 </div>
               </article>
             );
           }
         )}
       </div>
+      {mobileObservationStructure && (
+        <ObservationDetailsDialog
+          observation={observations.find(
+            (observation) => observation.structure === mobileObservationStructure
+          )}
+          activeValue={activeObservationMap.get(mobileObservationStructure)}
+          isFinalized={isFinalized}
+          onRegisterObservation={onRegisterObservation}
+          onUnregisterObservation={onUnregisterObservation}
+          onDismiss={() => setMobileObservationStructure(null)}
+        />
+      )}
     </Panel>
   );
 }

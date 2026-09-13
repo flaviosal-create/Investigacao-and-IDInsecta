@@ -4,9 +4,31 @@ export function normalizeProtocol(
   return {
     ...protocol,
     rules: normalizeRules(
-      protocol.rules ?? []
+      filterConflictRules(protocol)
     ),
   };
+}
+
+function filterConflictRules(protocol) {
+  const allowedConflicts =
+    protocol.investigationPolicy
+      ?.allowedConflictEvidence;
+
+  if (!allowedConflicts) {
+    return protocol.rules ?? [];
+  }
+
+  return (protocol.rules ?? []).filter((rule) => {
+    if (rule.effect !== "negative") {
+      return true;
+    }
+
+    return allowedConflicts.some(
+      ({ structure, values }) =>
+        rule.structure === structure &&
+        values.includes(rule.value)
+    );
+  });
 }
 
 function normalizeRules(

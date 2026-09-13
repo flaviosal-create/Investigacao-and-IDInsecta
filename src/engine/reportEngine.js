@@ -5,7 +5,7 @@ export function generateReport(
   const hypotheses = hasObservations
     ? investigation.hypotheses ?? []
     : [];
-  const leader = hypotheses[0];
+  const leader = hypotheses[0]?.isLeader === false ? null : hypotheses[0];
 
   const runnerUp = hypotheses[1];
 
@@ -31,11 +31,13 @@ export function generateReport(
     totalObservations:
       investigation.observations.length,
 
+    tiedHypotheses: hypotheses.filter((item) => item.score === hypotheses[0]?.score && item.isTied).map((item) => item.name),
+
     leadingHypothesis:
       leader?.name ?? null,
 
     confidence:
-      leader?.confidence?.label ??
+      (hypotheses[0]?.assessment ?? hypotheses[0]?.confidence)?.label ??
       null,
 
     conclusion:
@@ -60,10 +62,10 @@ export function generateReport(
         : null,
 
     leadingMargin:
-      leader?.margin ?? null,
+      hypotheses[0]?.margin ?? null,
 
     competingHypothesis:
-      runnerUp?.name ?? null,
+      leader && runnerUp && !runnerUp.isTied ? runnerUp.name : null,
 
     suggestion:
       hasObservations
@@ -129,7 +131,7 @@ function buildNarrative(
     );
 
     lines.push(
-      `Nível de confiança: ${leader.confidence.label}.`
+      `Nível de confiança: ${(leader.assessment ?? leader.confidence).label}.`
     );
 
     if (

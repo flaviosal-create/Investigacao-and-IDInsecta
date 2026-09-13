@@ -50,7 +50,6 @@ export function InvestigationWorkspace({
   selectedProtocol,
   investigation,
   report,
-  sessionNotice,
   leader,
   activePanel,
   onPanelChange,
@@ -195,11 +194,10 @@ export function InvestigationWorkspace({
         </button>
       </section>
 
-      {sessionNotice ? (
-        <p className="session-notice" role="status">
-          {sessionNotice}
-        </p>
-      ) : null}
+      <HypothesisThermometerStrip
+        selectedProtocol={selectedProtocol}
+        investigation={investigation}
+      />
 
       <p
         className="screen-reader-only"
@@ -251,10 +249,6 @@ export function InvestigationWorkspace({
         {renderActivePanel()}
       </div>
 
-      <HypothesisThermometerStrip
-        selectedProtocol={selectedProtocol}
-        investigation={investigation}
-      />
     </main>
   );
 }

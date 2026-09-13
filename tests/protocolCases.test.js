@@ -16,6 +16,7 @@ test(
     representativeCases.forEach(
       ({
         expected,
+        expectedTied,
         observations,
       }) => {
         const investigation =
@@ -23,6 +24,13 @@ test(
             ordensInsectaV1,
             observations
           );
+
+        if (expectedTied) {
+          assert.deepEqual(investigation.hypotheses.filter((h) => h.rank === 1).map((h) => h.id), expectedTied);
+          assert.ok(investigation.hypotheses.every((h) => !h.isLeader));
+          assert.equal(investigation.conclusion.status, "em_disputa");
+          return;
+        }
 
         assert.equal(
           investigation.hypotheses[0].id,
@@ -82,8 +90,7 @@ test(
       ({
         id,
         observations,
-        expectedLeader,
-        expectedRunnerUp,
+        expectedTied,
         expectedSuggestion,
         expectedConclusion,
         expectedDecision,
@@ -94,16 +101,12 @@ test(
             observations
           );
 
-        assert.equal(
-          investigation.hypotheses[0].id,
-          expectedLeader,
-          `Lider inesperada em ${id}`
+        assert.deepEqual(
+          investigation.hypotheses.filter((h) => h.rank === 1).map((h) => h.id),
+          expectedTied,
+          `Empate inesperado em ${id}`
         );
-        assert.equal(
-          investigation.hypotheses[1].id,
-          expectedRunnerUp,
-          `Vice-lider inesperada em ${id}`
-        );
+        assert.ok(investigation.hypotheses.every((h) => !h.isLeader));
         assert.equal(
           investigation.suggestion
             ?.structure,

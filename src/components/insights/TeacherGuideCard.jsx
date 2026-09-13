@@ -15,7 +15,7 @@ export function TeacherGuideCard({
   const interpretation =
     investigation?.interpretation ?? null;
 
-  if (!leader) {
+  if (!leader || !investigation?.observations?.length) {
     return (
       <>
         <span className="report-label">
@@ -28,11 +28,21 @@ export function TeacherGuideCard({
 
         <p>
           Registre as primeiras observações
-          para formar uma hipótese líder e
-          uma concorrente.
+          para comparar hipóteses e buscar
+          evidências que as diferenciem.
         </p>
       </>
     );
+  }
+
+  if (leader.isLeader === false) {
+    return <>
+      <span className="report-label">Leitura docente</span>
+      <strong>Sem hipótese líder nas evidências atuais.</strong>
+      <p>{interpretation?.summary}</p>
+      <p>Compare as características compatíveis e os conflitos de cada hipótese. A ordem da lista não representa preferência entre hipóteses empatadas.</p>
+      <p className="suggestion-context">{buildNextMoveReading(investigation)}</p>
+    </>;
   }
 
   const mainEvidences =
@@ -146,7 +156,7 @@ function buildLeaderReading({
   leader,
   runnerUp,
 }) {
-  if (!runnerUp) {
+  if (!runnerUp || runnerUp.isTied) {
     return `${leader.name} é a hipótese em leitura.`;
   }
 

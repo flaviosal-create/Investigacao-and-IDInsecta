@@ -30,9 +30,9 @@ export function SidebarSummaryPanel({
           <p className="summary-hint">
             {leader
               ? describeConfidenceTone(
-                  leader.confidence.level
+                  (leader.assessment ?? leader.confidence).level
                 )
-              : "Registre observações para iniciar a leitura de confiança."}
+              : "Compare a sustentação das hipóteses; ainda não há uma líder definida."}
           </p>
         </div>
         <div>

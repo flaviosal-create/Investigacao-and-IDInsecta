@@ -5,6 +5,8 @@
  * - maximizar ganho de informação
  */
 
+import { getEffectiveRuleWeight } from "../protocols/scoring.js";
+
 export function suggestObservation(
   observations,
   protocol,
@@ -20,6 +22,27 @@ export function suggestObservation(
   const observedStructures = observations.map(
     (obs) => obs.structure
   );
+
+  const tied = hypotheses.filter((item) => item.score === leader.score);
+  if (tied.length > 1) {
+    const candidates = protocol.observations.filter((item) => !observedStructures.includes(item.structure));
+    const ranked = candidates.map((observation) => {
+      const profiles = tied.map((hypothesis) => calculateStructureProfile(protocol.rules, hypothesis.id, observation.structure, protocol));
+      let distance = 0;
+      for (let i = 0; i < profiles.length; i += 1) {
+        for (let j = i + 1; j < profiles.length; j += 1) {
+          distance += calculateProfileDistance(profiles[i], profiles[j]);
+        }
+      }
+      return { structure: observation.structure, distance };
+    }).sort((a, b) => b.distance - a.distance || a.structure.localeCompare(b.structure));
+    if (!ranked[0] || ranked[0].distance === 0) return null;
+    return {
+      structure: ranked[0].structure,
+      comparedHypotheses: tied.map((item) => item.id),
+      reason: `Pode diferenciar o conjunto de ${tied.length} hipóteses empatadas pelas evidências observadas.`,
+    };
+  }
 
   const discriminativeSuggestion =
     buildDiscriminativeSuggestion({
@@ -47,7 +70,7 @@ export function suggestObservation(
     )
     .sort(
       (a, b) =>
-        b.weight - a.weight
+        getEffectiveRuleWeight(protocol, b) - getEffectiveRuleWeight(protocol, a)
     );
 
   if (candidateRules.length === 0) {
@@ -93,14 +116,16 @@ function buildDiscriminativeSuggestion({
         calculateStructureProfile(
           protocol.rules,
           leader.id,
-          observation.structure
+          observation.structure,
+          protocol
         );
 
       const runnerUpImpact =
         calculateStructureProfile(
           protocol.rules,
           runnerUp.id,
-          observation.structure
+          observation.structure,
+          protocol
         );
 
       const discriminationPower =
@@ -144,7 +169,8 @@ function buildDiscriminativeSuggestion({
 function calculateStructureProfile(
   rules,
   hypothesisId,
-  structure
+  structure,
+  protocol
 ) {
   return rules
     .filter(
@@ -158,8 +184,8 @@ function calculateStructureProfile(
       (profile, rule) => {
         const signal =
           rule.effect === "positive"
-            ? rule.weight
-            : -rule.weight;
+            ? getEffectiveRuleWeight(protocol, rule)
+            : -getEffectiveRuleWeight(protocol, rule);
 
         profile[rule.value] =
           (profile[rule.value] ?? 0) +

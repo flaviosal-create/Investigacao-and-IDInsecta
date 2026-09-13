@@ -241,8 +241,7 @@ test(
       investigation.suggestion,
       {
         structure: "antena",
-        reason:
-          "Pode diferenciar Coleoptera de Hymenoptera.",
+        reason: "Pode diferenciar Coleoptera de Hymenoptera.",
       }
     );
     assert.deepEqual(
@@ -715,8 +714,8 @@ test(
       investigation.suggestion,
       {
         structure: "antena",
-        reason:
-          "Pode diferenciar Coleoptera de Hymenoptera.",
+        comparedHypotheses: ["coleoptera", "hymenoptera"],
+        reason: "Pode diferenciar o conjunto de 2 hipóteses empatadas pelas evidências observadas.",
       }
     );
   }

@@ -1,3 +1,4 @@
+import { assessEvidence, assessComparison } from "./EvidenceAssessment.js";
 import { calculateConfidence } from "./ConfidenceEngine.js";
 import { getEffectiveRuleWeight } from "../protocols/scoring.js";
 
@@ -53,7 +54,7 @@ export function calculateHypotheses(
       return {
         ...hypothesis,
 
-        score: positive - negative,
+        score: Number((positive - negative).toFixed(6)),
 
         evidences,
 
@@ -81,15 +82,24 @@ export function calculateHypotheses(
       return {
         ...hypothesis,
 
-        rank: index + 1,
+        rank: ranked.findIndex((item) => item.score === hypothesis.score) + 1,
+        isLeader: index === 0 && hypothesis.score > 0 &&
+          (!runnerUp || hypothesis.score > runnerUp.score),
+        isTied: ranked.filter((item) => item.score === hypothesis.score).length > 1,
 
         margin,
+
+        assessment: assessEvidence(hypothesis, protocol.investigationPolicy),
+        comparison: assessComparison(hypothesis, {
+          topScore: leader.score,
+          tiedCount: ranked.filter((item) => item.score === hypothesis.score).length,
+        }),
 
         confidence: calculateConfidence({
           score: hypothesis.score,
           conflicts: hypothesis.conflicts,
           margin,
-          isLeader: index === 0,
+          isLeader: hypothesis.score === leader.score,
           hasCompetition:
             ranked.length > 1,
         }),

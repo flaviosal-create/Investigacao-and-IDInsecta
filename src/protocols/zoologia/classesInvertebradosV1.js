@@ -115,6 +115,13 @@ export const classesMolluscaV1 = createProfileProtocol({
 });
 
 export const classesArthropodaV1 = createProfileProtocol({
+  investigationPolicy: {
+    scoringMode: "shared-evidence",
+    minimumObservedStructuresForConclusion: 3,
+    minimumSupportingStructuresForConclusion: 3,
+    preferDiscriminativeSuggestion: true,
+    requireNoLeaderConflictsForConclusion: true,
+  },
   id: "classes-arthropoda-v1",
   name: "Grandes Grupos de Arthropoda",
   description: "Investigação comparativa de Insecta, Arachnida, Crustacea, Chilopoda e Diplopoda por tagmose, apêndices e sistemas respiratórios.",

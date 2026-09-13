@@ -62,10 +62,6 @@ test(
       mobile,
       /\.observation-card-content\s*\{[\s\S]*display:\s*grid/
     );
-    assert.match(
-      mobile,
-      /\.observation-card-content\s+\.clear-observation-button/
-    );
   }
 );
 

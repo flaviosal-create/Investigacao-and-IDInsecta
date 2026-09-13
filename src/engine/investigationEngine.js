@@ -252,7 +252,7 @@ export function runInvestigation(
     .reverse()
     .find((entry) => entry.type === "hypothesis-update");
 
-  const leaderName = leader?.name ?? null;
+  const leaderName = leader?.isLeader ? leader.name : null;
   const leaderScore = leader?.score ?? null;
 
   const hasLeaderChanged =

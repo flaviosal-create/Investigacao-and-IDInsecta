@@ -8,6 +8,7 @@ export const familiasColeopteraV1 = createProfileProtocol({
   references: referencesInvertebratesV1,
   pedagogicalNote: "Este protocolo começa após uma investigação de Coleoptera, mas constitui um novo universo de hipóteses. As características sustentam comparações entre famílias; não formam uma chave dicotômica nem identificam automaticamente o exemplar.",
   investigationPolicy: {
+    scoringMode: "shared-evidence",
     minimumObservedStructuresForConclusion: 3,
     minimumSupportingStructuresForConclusion: 3,
     preferDiscriminativeSuggestion: true,

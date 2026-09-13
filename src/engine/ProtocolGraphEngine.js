@@ -11,7 +11,7 @@ suggestNextProtocol(
   const leader =
     investigation?.hypotheses?.[0];
 
-  if (!leader) {
+  if (!leader || leader.isLeader === false) {
     return null;
   }
 

@@ -25,7 +25,7 @@ export function resolveSuggestionMode(
       label:
         "Observação para fortalecer a leitura",
       focus:
-        "A hipótese líder já existe, mas ainda precisa ganhar sustentação antes do encerramento.",
+        "As hipóteses ainda precisam de mais sustentação antes do encerramento.",
     };
   }
 
@@ -41,6 +41,9 @@ export function buildSuggestionContext({
   runnerUp,
   suggestion,
 }) {
+  if (suggestion?.comparedHypotheses?.length > 1) {
+    return "Compare as hipóteses empatadas e procure uma característica que diferencie suas explicações.";
+  }
   if (!leader || !suggestion) {
     return "Registre a observação sugerida para destravar a leitura atual.";
   }
@@ -171,6 +174,8 @@ export function describeConfidenceTone(
   level
 ) {
   const toneByLevel = {
+    parcial: "Há evidências favoráveis, mas ainda falta sustentação em estruturas adicionais.",
+    com_conflitos: "Há observações em conflito com esta hipótese; revise as evidências.",
     insuficiente:
       "Ainda nao ha base suficiente para sustentar bem as hipoteses.",
     inicial:
@@ -180,7 +185,7 @@ export function describeConfidenceTone(
     disputada:
       "As hipoteses mais fortes continuam proximas e pedem observacao discriminativa.",
     bem_sustentada:
-      "A lider esta bem apoiada e claramente separada das concorrentes.",
+      "A hipótese reúne evidências de várias estruturas, sem conflitos. A comparação é avaliada separadamente.",
     contraditoria:
       "Ha sinais em conflito que pedem revisao antes de concluir.",
   };

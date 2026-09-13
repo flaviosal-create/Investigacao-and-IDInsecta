@@ -20,13 +20,9 @@ export function useInvestigationSession(
   const [session, setSession] = useState(
     null
   );
-  const [sessionNotice, setSessionNotice] =
-    useState("");
-
   useEffect(() => {
     if (!selectedProtocol) {
       setSession(null);
-      setSessionNotice("");
       return;
     }
 
@@ -34,9 +30,6 @@ export function useInvestigationSession(
 
     if (!persistedSession) {
       setSession(startSession(selectedProtocol));
-      setSessionNotice(
-        "Nova investigação iniciada para este protocolo."
-      );
       return;
     }
 
@@ -44,17 +37,11 @@ export function useInvestigationSession(
       // Hipóteses, sugestões e conclusões são dados derivados. Recalculá-los
       // também protege contra sessões persistidas com um protocolo atualizado.
       setSession(runSession(persistedSession));
-      setSessionNotice(
-        "Investigação recuperada automaticamente deste navegador."
-      );
     } catch {
       // Uma sessão antiga pode conter uma observação que deixou de existir no
       // protocolo. Nesse caso, começa-se uma investigação limpa e válida.
       clearPersistedSession(selectedProtocol.id);
       setSession(startSession(selectedProtocol));
-      setSessionNotice(
-        "A sessão anterior não era compatível; uma nova investigação foi iniciada."
-      );
     }
   }, [selectedProtocol]);
 
@@ -133,9 +120,6 @@ export function useInvestigationSession(
 
     clearPersistedSession(selectedProtocol.id);
     setSession(startSession(selectedProtocol));
-    setSessionNotice(
-      "Investigação reiniciada e sessão anterior removida deste navegador."
-    );
   }
 
   function loadObservations(observations) {
@@ -154,14 +138,8 @@ export function useInvestigationSession(
       );
 
       setSession(runSession(loadedSession));
-      setSessionNotice(
-        "Caso carregado e investigação recalculada."
-      );
     } catch {
       setSession(startSession(selectedProtocol));
-      setSessionNotice(
-        "Não foi possível carregar o caso; uma nova investigação foi iniciada."
-      );
     }
   }
 
@@ -169,16 +147,12 @@ export function useInvestigationSession(
     setSession((currentSession) =>
       currentSession ? finalizeSession(currentSession) : currentSession
     );
-    setSessionNotice(
-      "Investigação encerrada pelo aluno. O relatório final foi gerado."
-    );
   }
 
   function reopenInvestigationSession() {
     setSession((currentSession) =>
       currentSession ? reopenSession(currentSession) : currentSession
     );
-    setSessionNotice("Investigação reaberta para novas observações.");
   }
 
   function startNewInvestigationSession() {
@@ -195,7 +169,6 @@ export function useInvestigationSession(
         ],
       };
     });
-    setSessionNotice("Nova investigação iniciada. A investigação anterior foi arquivada.");
   }
 
   function restoreArchivedInvestigation(index) {
@@ -217,14 +190,12 @@ export function useInvestigationSession(
         ],
       };
     });
-    setSessionNotice("Investigação anterior restaurada para edição.");
   }
 
   return {
     session,
     investigation,
     report,
-    sessionNotice,
     activeObservationMap,
     registerObservation,
     unregisterObservation,

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
+import { registerServiceWorker } from "./registerServiceWorker.js";
 import "../ui/styles.css";
 
 ReactDOM.createRoot(
@@ -10,3 +11,5 @@ ReactDOM.createRoot(
     <App />
   </React.StrictMode>
 );
+
+registerServiceWorker();

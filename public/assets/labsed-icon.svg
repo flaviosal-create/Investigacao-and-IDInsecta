@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">LABSED</title>
+  <desc id="desc">Símbolo quadrado do LABSED Investigação.</desc>
+  <rect width="512" height="512" rx="96" fill="#f7fbf8"/>
+  <circle cx="256" cy="256" r="164" fill="#22543d"/>
+  <path d="M256 120c71 0 128 57 128 128 0 36-15 69-39 92l-32-32c16-15 25-36 25-60 0-45-37-82-82-82s-82 37-82 82c0 24 10 45 25 60l-32 32c-24-23-39-56-39-92 0-71 57-128 128-128Z" fill="#d9f2e3"/>
+  <path d="M256 210c25 0 46 21 46 46s-21 46-46 46-46-21-46-46 21-46 46-46Z" fill="#f7fbf8"/>
+  <path d="M256 352c35 0 67-13 91-35l35 35c-33 31-77 50-126 50s-93-19-126-50l35-35c24 22 56 35 91 35Z" fill="#8ccf9f"/>
+</svg>

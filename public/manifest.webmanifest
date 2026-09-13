@@ -1,0 +1,24 @@
+{
+  "name": "LABSED Investigação",
+  "short_name": "LABSED",
+  "description": "Plataforma educacional integrada para identificação biológica e aprendizagem investigativa baseada em evidências.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7fbf8",
+  "theme_color": "#f7fbf8",
+  "lang": "pt-BR",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/labsed-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "education",
+    "science"
+  ]
+}

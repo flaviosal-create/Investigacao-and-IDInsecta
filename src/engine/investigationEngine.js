@@ -270,8 +270,8 @@ function updateHypothesisHistory(history, hypotheses, timestamp) {
   const lastUpdate = [...history]
     .reverse()
     .find((entry) => entry.type === "hypothesis-update");
-  const leaderName = leader?.name ?? null;
-  const leaderScore = leader?.score ?? null;
+  const leaderName = leader?.isLeader ? leader.name : null;
+  const leaderScore = leader?.isLeader ? leader.score : null;
 
   if (
     lastUpdate &&

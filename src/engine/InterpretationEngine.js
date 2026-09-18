@@ -21,7 +21,12 @@ export function generateInterpretation(
     };
   }
 
-  const tied = investigation.hypotheses.filter((item) => item.score === leader.score);
+  const hasComparableScores =
+    typeof leader.score === "number" &&
+    investigation.hypotheses.every((item) => typeof item.score === "number");
+  const tied = hasComparableScores
+    ? investigation.hypotheses.filter((item) => item.score === leader.score)
+    : [];
   if (tied.length > 1) {
     return {
       state: leader.score > 0 ? "em_disputa" : "em_andamento",

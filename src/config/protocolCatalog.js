@@ -285,87 +285,49 @@ export function compareProtocols(
   );
 }
 
+const protocolOrientationById = {
+  [tecidosBasicosV1.id]:
+    "Este protocolo investiga tipos de tecido como hipóteses centrais. As evidências vêm de características celulares, estruturais e morfológicas observáveis, sem exigir continuação automática para órgão.",
+  [orgaosHistologicosV1.id]:
+    "Este protocolo investiga órgãos como hipóteses centrais. Tecidos, arranjos celulares e estruturas marcantes entram aqui como evidências para sustentar ou enfraquecer cada órgão dentro do mesmo universo investigativo.",
+  [epiteliosRevestimentoV1.id]:
+    "Este protocolo investiga tipos de epitélio de revestimento como hipóteses centrais, a partir de camadas celulares, núcleos e especializações observáveis.",
+  [musculoLisoEstriadoV1.id]:
+    "Este protocolo investiga tipos de tecido muscular como hipóteses centrais, a partir de estriações, formato celular e posição dos núcleos.",
+  [conjuntivoFrouxoDensoV1.id]:
+    "Este protocolo investiga especializações do tecido conjuntivo como hipóteses centrais, a partir de matriz, fibras, células e organização histológica.",
+  [gruposInvertebradosV1.id]:
+    "Este protocolo investiga grandes filos de invertebrados como hipóteses centrais, a partir de simetria, revestimento, organização interna e locomoção.",
+  [grandesGruposVegetaisV1.id]:
+    "Este protocolo investiga grandes grupos vegetais como hipóteses centrais, sustentadas por evidências reprodutivas, vasculares e morfofuncionais.",
+  [grandesGruposAngiospermasV1.id]:
+    "Este protocolo investiga grandes grupos de angiospermas como hipóteses centrais, sustentadas por caracteres florais, foliares e anatômicos.",
+  [ordensAngiospermasBrasilV1.id]:
+    "Este protocolo investiga ordens botânicas relevantes no Brasil como hipóteses centrais, sustentadas por caracteres florais, foliares, inflorescências e frutos.",
+  [familiasAngiospermasBrasilV1.id]:
+    "Este protocolo investiga famílias botânicas importantes no Brasil como hipóteses centrais, sustentadas por combinações de porte, folhas, flores, androceu, ovário e fruto.",
+  [generosAngiospermasBrasilV1.id]:
+    "Este protocolo investiga gêneros selecionados do Brasil como hipóteses centrais, sustentados por combinações diagnósticas de hábito, folhas, organização reprodutiva, pista marcante e fruto ou diásporo.",
+  [generosFabaceaeBrasilV1.id]:
+    "Este protocolo investiga gêneros selecionados de Fabaceae como hipóteses centrais, sustentados por combinações de hábito, folhas, flores e fruto.",
+  [generosAsteraceaeBrasilV1.id]:
+    "Este protocolo investiga gêneros selecionados de Asteraceae como hipóteses centrais, sustentados por hábito, folhas, capítulo, flores e fruto.",
+  [generosPoaceaeBrasilV1.id]:
+    "Este protocolo investiga gêneros selecionados de Poaceae como hipóteses centrais, sustentados por porte, colmo, folhas, inflorescência e espigueta.",
+};
+
 export function buildProtocolOrientation(
   protocol
 ) {
-  if (protocol.domain === "histologia") {
-    if (protocol.id === tecidosBasicosV1.id) {
-      return "Este protocolo investiga tipos de tecido como hipóteses centrais. As evidências vêm de características celulares, estruturais e morfológicas observáveis, sem exigir continuação automática para órgão.";
-    }
+  const specificOrientation = protocolOrientationById[protocol.id];
 
-    if (protocol.id === orgaosHistologicosV1.id) {
-      return "Este protocolo investiga órgãos como hipóteses centrais. Tecidos, arranjos celulares e estruturas marcantes entram aqui como evidências para sustentar ou enfraquecer cada órgão dentro do mesmo universo investigativo.";
-    }
-
-    if (protocol.id === epiteliosRevestimentoV1.id) {
-      return "Este protocolo investiga tipos de epitélio de revestimento como hipóteses centrais, a partir de camadas celulares, núcleos e especializações observáveis.";
-    }
-
-    if (protocol.id === musculoLisoEstriadoV1.id) {
-      return "Este protocolo investiga tipos de tecido muscular como hipóteses centrais, a partir de estriações, formato celular e posição dos núcleos.";
-    }
-
-    if (protocol.id === conjuntivoFrouxoDensoV1.id) {
-      return "Este protocolo investiga especializações do tecido conjuntivo como hipóteses centrais, a partir de matriz, fibras, células e organização histológica.";
-    }
+  if (specificOrientation) {
+    return specificOrientation;
   }
 
   if (protocol.domain === "zoologia") {
-    if (protocol.id === gruposInvertebradosV1.id) {
-      return "Este protocolo investiga grandes filos de invertebrados como hipóteses centrais, a partir de simetria, revestimento, organização interna e locomoção.";
-    }
-
     if (protocol.id.startsWith("classes-")) {
       return "Este protocolo investiga classes como hipóteses centrais dentro de um filo, usando características gerais comparáveis. Ele funciona como um universo autônomo, mesmo quando for sugerido após outra investigação.";
-    }
-  }
-
-  if (protocol.domain === "botanica") {
-    if (
-      protocol.id ===
-      grandesGruposVegetaisV1.id
-    ) {
-      return "Este protocolo investiga grandes grupos vegetais como hipóteses centrais, sustentadas por evidências reprodutivas, vasculares e morfofuncionais.";
-    }
-
-    if (
-      protocol.id ===
-      grandesGruposAngiospermasV1.id
-    ) {
-      return "Este protocolo investiga grandes grupos de angiospermas como hipóteses centrais, sustentadas por caracteres florais, foliares e anatômicos.";
-    }
-
-    if (
-      protocol.id ===
-      ordensAngiospermasBrasilV1.id
-    ) {
-      return "Este protocolo investiga ordens botânicas relevantes no Brasil como hipóteses centrais, sustentadas por caracteres florais, foliares, inflorescências e frutos.";
-    }
-
-    if (
-      protocol.id ===
-      familiasAngiospermasBrasilV1.id
-    ) {
-      return "Este protocolo investiga famílias botânicas importantes no Brasil como hipóteses centrais, sustentadas por combinações de porte, folhas, flores, androceu, ovário e fruto.";
-    }
-
-    if (
-      protocol.id ===
-      generosAngiospermasBrasilV1.id
-    ) {
-      return "Este protocolo investiga gêneros selecionados do Brasil como hipóteses centrais, sustentados por combinações diagnósticas de hábito, folhas, organização reprodutiva, pista marcante e fruto ou diásporo.";
-    }
-
-    if (protocol.id === generosFabaceaeBrasilV1.id) {
-      return "Este protocolo investiga gêneros selecionados de Fabaceae como hipóteses centrais, sustentados por combinações de hábito, folhas, flores e fruto.";
-    }
-
-    if (protocol.id === generosAsteraceaeBrasilV1.id) {
-      return "Este protocolo investiga gêneros selecionados de Asteraceae como hipóteses centrais, sustentados por hábito, folhas, capítulo, flores e fruto.";
-    }
-
-    if (protocol.id === generosPoaceaeBrasilV1.id) {
-      return "Este protocolo investiga gêneros selecionados de Poaceae como hipóteses centrais, sustentados por porte, colmo, folhas, inflorescência e espigueta.";
     }
   }
 
@@ -473,4 +435,22 @@ export function buildScopeMessage(
   }
 
   return "Você está em uma investigação autônoma. Outros protocolos podem ser escolhidos depois como novas leituras, mas a resposta atual precisa se sustentar aqui dentro.";
+}
+
+export const availableZoologyProtocolIds = new Set([
+  "classes-arthropoda-v1",
+  "ordens-insecta-v1",
+]);
+
+export function filterZoologyProtocols(domains, domainProtocols, groupedProtocols) {
+  return {
+    domains: domains.filter((domain) => domain.id === "zoologia"),
+    protocols: domainProtocols.filter((protocol) => availableZoologyProtocolIds.has(protocol.id)),
+    groups: groupedProtocols
+      .map(([label, items]) => [
+        label,
+        items.filter((protocol) => availableZoologyProtocolIds.has(protocol.id)),
+      ])
+      .filter(([, items]) => items.length > 0),
+  };
 }

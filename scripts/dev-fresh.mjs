@@ -3,7 +3,7 @@ import { existsSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 
 const projectRoot = resolve(new URL("..", import.meta.url).pathname);
-let port = 5175;
+let port = 5173;
 
 function processesOnPort(currentPort) {
   try {

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getCalibrationCasesForProtocol,
 } from "../protocols/zoologia/calibrationCasesV1.js";
@@ -33,9 +33,15 @@ export function CalibrationReviewPanel({
   selectedProtocol,
   onLoadCase,
 }) {
+  const [reviewStates, setReviewStates] = useState({});
   const cases = getCalibrationCasesForProtocol(
     selectedProtocol
   );
+  const storageKey = `labsed-calibration-review:${selectedProtocol.id}`;
+
+  useEffect(() => {
+    setReviewStates(readReviewStates(storageKey));
+  }, [storageKey]);
   const reviewedCases = useMemo(
     () =>
       cases.map((scenario) => ({
@@ -60,6 +66,42 @@ export function CalibrationReviewPanel({
   ).length;
   const casesNeedingReview =
     reviewedCases.length - matchingCases;
+  const approvedCases = reviewedCases.filter(
+    (scenario) => reviewStates[scenario.id]?.status === "approved"
+  ).length;
+  const flaggedCases = reviewedCases.filter(
+    (scenario) => reviewStates[scenario.id]?.status === "review"
+  ).length;
+  const pendingCases = reviewedCases.length - approvedCases - flaggedCases;
+  const calibrationApproved = reviewedCases.length > 0 && approvedCases === reviewedCases.length;
+
+  function updateReviewState(caseId, status) {
+    setReviewStates((current) => {
+      const next = {
+        ...current,
+        [caseId]: {
+          ...(current[caseId] ?? {}),
+          status,
+        },
+      };
+      writeReviewStates(storageKey, next);
+      return next;
+    });
+  }
+
+  function updateReviewNote(caseId, note) {
+    setReviewStates((current) => {
+      const next = {
+        ...current,
+        [caseId]: {
+          ...(current[caseId] ?? {}),
+          note,
+        },
+      };
+      writeReviewStates(storageKey, next);
+      return next;
+    });
+  }
 
   return (
     <Panel className="calibration-review-panel">
@@ -89,6 +131,17 @@ export function CalibrationReviewPanel({
       ) : null}
 
       {reviewedCases.length ? (
+        <div className={`calibration-approval-status ${calibrationApproved ? "is-approved" : "is-pending"}`}>
+          <strong>
+            {calibrationApproved ? "Calibração aprovada" : "Aprovação docente pendente"}
+          </strong>
+          <span>
+            {approvedCases} aprovados · {flaggedCases} em revisão · {pendingCases} pendentes
+          </span>
+        </div>
+      ) : null}
+
+      {reviewedCases.length ? (
         <div className="calibration-case-list">
           {reviewedCases.map((scenario) => {
             const leader = scenario.result.hypotheses?.[0];
@@ -98,6 +151,7 @@ export function CalibrationReviewPanel({
               actualStatus === scenario.expectedConclusion &&
               (!scenario.expectedLeader ||
                 leader?.id === scenario.expectedLeader);
+            const reviewState = reviewStates[scenario.id] ?? {};
 
             return (
               <article
@@ -158,6 +212,36 @@ export function CalibrationReviewPanel({
                 >
                   Abrir este caso na investigação
                 </button>
+
+                <div className="calibration-approval-controls">
+                  <div className="calibration-approval-actions" role="group" aria-label={`Decisão docente para ${scenario.label}`}>
+                    <button
+                      className={`secondary-button ${reviewState.status === "approved" ? "is-selected" : ""}`}
+                      type="button"
+                      aria-pressed={reviewState.status === "approved"}
+                      onClick={() => updateReviewState(scenario.id, "approved")}
+                    >
+                      Aprovar caso
+                    </button>
+                    <button
+                      className={`secondary-button ${reviewState.status === "review" ? "is-selected is-warning" : ""}`}
+                      type="button"
+                      aria-pressed={reviewState.status === "review"}
+                      onClick={() => updateReviewState(scenario.id, "review")}
+                    >
+                      Marcar para revisão
+                    </button>
+                  </div>
+                  <label className="calibration-note-field">
+                    <span>Observação docente (opcional)</span>
+                    <textarea
+                      value={reviewState.note ?? ""}
+                      onChange={(event) => updateReviewNote(scenario.id, event.target.value)}
+                      placeholder="Registre um ajuste ou comentário sobre este caso."
+                      rows="2"
+                    />
+                  </label>
+                </div>
               </article>
             );
           })}
@@ -169,4 +253,22 @@ export function CalibrationReviewPanel({
       )}
     </Panel>
   );
+}
+
+function readReviewStates(storageKey) {
+  try {
+    const stored = window.localStorage.getItem(storageKey);
+    const parsed = stored ? JSON.parse(stored) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeReviewStates(storageKey, states) {
+  try {
+    window.localStorage.setItem(storageKey, JSON.stringify(states));
+  } catch {
+    // A revisão continua disponível durante a sessão mesmo sem armazenamento.
+  }
 }

@@ -20,11 +20,14 @@
 
 export function createInvestigation({
   protocolId,
+  specimenCode = "",
 }) {
   return {
     id: crypto.randomUUID(),
 
     protocolId,
+
+    specimenCode,
 
     status: "started",
 

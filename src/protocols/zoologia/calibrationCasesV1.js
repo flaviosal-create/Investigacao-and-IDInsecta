@@ -281,6 +281,86 @@ export const calibrationCasesArthropodaV1 = [
   },
 ];
 
+export const calibrationCasesColeopteraV1 = [
+  {
+    id: "carabidae-corrida-e-mandibulas",
+    label: "Carabídeo corredor",
+    purpose:
+      "Sustenta Carabidae por corpo alongado, corrida no solo e mandíbulas robustas.",
+    observations: [
+      ["forma_do_corpo", "alongado_estreito"],
+      ["aparelho_bucal", "mandibulas_robustas"],
+      ["pistas_funcionais", "corrida_no_solo"],
+    ],
+    expectedLeader: "carabidae",
+    expectedConclusion: "concluida",
+  },
+  {
+    id: "curculionidae-rostro",
+    label: "Gorgulho com rostro",
+    purpose:
+      "Sustenta Curculionidae pela combinação de rostro e antenas geniculadas.",
+    observations: [
+      ["forma_do_corpo", "alongado_com_rostro"],
+      ["antenas", "geniculadas"],
+      ["aparelho_bucal", "rostro_com_pecas_bucais_no_apice"],
+    ],
+    expectedLeader: "curculionidae",
+    expectedConclusion: "concluida",
+  },
+  {
+    id: "scarabaeidae-antenas-lameladas",
+    label: "Escarabeídeo de antenas lameladas",
+    purpose:
+      "Sustenta Scarabaeidae por corpo oval convexo, pronoto largo e antenas lameladas.",
+    observations: [
+      ["forma_do_corpo", "oval_convexo"],
+      ["antenas", "lameladas"],
+      ["pronoto", "largo_e_convexo"],
+    ],
+    expectedLeader: "scarabaeidae",
+    expectedConclusion: "concluida",
+  },
+  {
+    id: "coccinellidae-corpo-arredondado",
+    label: "Coccinelídeo de corpo arredondado",
+    purpose:
+      "Sustenta Coccinellidae pelo corpo arredondado, antenas clavadas e predação de pequenos artrópodes.",
+    observations: [
+      ["forma_do_corpo", "arredondado"],
+      ["antenas", "clavadas"],
+      ["pistas_funcionais", "predacao_de_pequenos_artropodes"],
+    ],
+    expectedLeader: "coccinellidae",
+    expectedConclusion: "concluida",
+  },
+  {
+    id: "cerambycidae-antenas-longas",
+    label: "Cerambicídeo de antenas longas",
+    purpose:
+      "Sustenta Cerambycidae por antenas muito longas, corpo alongado e larvas associadas à madeira ou a caules.",
+    observations: [
+      ["forma_do_corpo", "alongado_com_antenas_longa"],
+      ["antenas", "longas_com_mais_de_metade_do_corpo"],
+      ["pistas_funcionais", "larvas_em_madeira_ou_caules"],
+    ],
+    expectedLeader: "cerambycidae",
+    expectedConclusion: "concluida",
+  },
+  {
+    id: "carabidae-incompleto",
+    label: "Coleóptero corredor com leitura incompleta",
+    purpose:
+      "Mantém a investigação aberta quando Carabidae é favorecida por corpo e função, mas ainda falta uma terceira estrutura independente.",
+    observations: [
+      ["forma_do_corpo", "alongado_estreito"],
+      ["pistas_funcionais", "corrida_no_solo"],
+    ],
+    expectedLeader: "carabidae",
+    expectedConclusion: "em_andamento",
+  },
+];
+
 export const calibrationCasesEchinodermataV1 = [
   {
     id: "asteroidea-sulcos-e-predacao",
@@ -371,6 +451,7 @@ const curatedCalibrationCasesByProtocolId = {
   "classes-annelida-v1": calibrationCasesAnnelidaV1,
   "classes-mollusca-v1": calibrationCasesMolluscaV1,
   "classes-arthropoda-v1": calibrationCasesArthropodaV1,
+  "familias-coleoptera-v1": calibrationCasesColeopteraV1,
   "classes-echinodermata-v1": calibrationCasesEchinodermataV1,
 };
 

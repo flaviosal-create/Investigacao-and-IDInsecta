@@ -12,6 +12,11 @@ import { NextProtocolCard }
 from "./insights/NextProtocolCard.jsx";
 import { CalibrationReviewPanel }
 from "./CalibrationReviewPanel.jsx";
+import { MethodEvaluationCard } from "./MethodEvaluationCard.jsx";
+import { MethodEvaluationDashboard } from "./MethodEvaluationDashboard.jsx";
+import { SpecimenEvaluationCard } from "./SpecimenEvaluationCard.jsx";
+import { loadStudyPlan } from "../utils/methodStudyPlan.js";
+import { normalizeInvestigationEvents } from "../utils/studyInstrumentation.js";
 import { downloadInvestigationReport }
 from "../utils/reportExport.js";
 import {
@@ -44,6 +49,10 @@ const workspaceTabs = [
     id: "calibracao",
     label: "Revisão docente",
   },
+  {
+    id: "avaliacao",
+    label: "Avaliação didática",
+  },
 ];
 
 export function InvestigationWorkspace({
@@ -67,6 +76,7 @@ export function InvestigationWorkspace({
   onReopenInvestigation,
   onStartNewInvestigation,
   archivedInvestigations,
+  completedInvestigations = 0,
   onRestoreArchivedInvestigation,
 }) {
   const tabListRef = useRef(null);
@@ -101,7 +111,9 @@ export function InvestigationWorkspace({
         return (
           <WorkspaceReportPanel
             report={report}
+            investigation={investigation}
             selectedProtocol={selectedProtocol}
+            completedInvestigations={completedInvestigations}
             onLoadObservations={onLoadObservations}
             onFinalizeInvestigation={onFinalizeInvestigation}
             onReopenInvestigation={onReopenInvestigation}
@@ -118,6 +130,8 @@ export function InvestigationWorkspace({
             onLoadCase={onLoadCalibrationCase}
           />
         );
+      case "avaliacao":
+        return <MethodEvaluationDashboard />;
       default:
         return (
           <WorkspaceFocusPanel
@@ -271,8 +285,117 @@ function WorkspaceStatusPanel({ report }) {
   );
 }
 
+function ReportFinalizationActions({ report, onFinalize, onReopen, onStartNew }) {
+  return (
+    <div className="report-finalization-actions">
+      {report.isFinalized ? (
+        <>
+          <p className="investigation-finalized-notice" role="status">
+            Relatório finalizado pelo aluno em {formatFinalizedDate(report.finalizedAt)}.
+          </p>
+          <button className="secondary-button" type="button" onClick={onReopen}>Editar investigação encerrada</button>
+          <button className="secondary-button" type="button" onClick={onStartNew}>Iniciar nova investigação</button>
+        </>
+      ) : (
+        <>
+          <button className="primary-action-button" type="button" onClick={() => {
+            if (window.confirm("Encerrar esta investigação com as hipóteses e observações atuais?")) onFinalize();
+          }}>
+            Encerrar investigação
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ArchivedInvestigations({ investigations, onRestore }) {
+  if (!investigations.length) return null;
+  return (
+    <section className="archived-investigations" aria-label="Investigações arquivadas">
+      <span className="report-label">Investigações arquivadas</span>
+      {investigations.map((archived, index) => (
+        <div className="archived-investigation-item" key={`${archived.id ?? "investigacao"}-${index}`}>
+          <span>
+            {archived.observations?.length ?? 0} observação(ões)
+            {archived.finalizedAt ? " · encerrada" : " · em andamento"}
+          </span>
+          <button className="secondary-button" type="button" onClick={() => onRestore(index)}>Editar anterior</button>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function SnapshotControls({ report, selectedProtocol, onLoadObservations }) {
+  const [status, setStatus] = useState("");
+  const [hasError, setHasError] = useState(false);
+
+  function exportSnapshot() {
+    const downloaded = downloadInvestigationSnapshot(report, selectedProtocol);
+    setHasError(!downloaded);
+    setStatus(downloaded ? "Snapshot da investigação preparado para download." : "Não foi possível preparar o snapshot.");
+  }
+
+  function importSnapshot(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const observations = parseInvestigationSnapshot(String(reader.result), selectedProtocol);
+        onLoadObservations(observations);
+        setHasError(false);
+        setStatus("Snapshot importado e investigação recalculada.");
+      } catch (error) {
+        setHasError(true);
+        setStatus(
+          error instanceof Error && error.message
+            ? error.message
+            : "Não foi possível importar o snapshot selecionado."
+        );
+      }
+    };
+    reader.onerror = () => {
+      setHasError(true);
+      setStatus("Não foi possível ler o arquivo selecionado.");
+    };
+    reader.readAsText(file);
+  }
+
+  return (
+    <>
+      <div className="snapshot-actions">
+        <button className="secondary-button" type="button" onClick={exportSnapshot}>Exportar investigação (.json)</button>
+        <label className="secondary-button snapshot-import-label">
+          Importar investigação (.json)
+          <input type="file" accept="application/json,.json" onChange={importSnapshot} />
+        </label>
+      </div>
+      {status ? <p className={`report-download-status ${hasError ? "is-error" : ""}`} role={hasError ? "alert" : "status"}>{status}</p> : null}
+    </>
+  );
+}
+
+function ReportDownloadControl({ report, selectedProtocol }) {
+  const [status, setStatus] = useState("");
+  return (
+    <>
+      <button className="secondary-button" type="button" onClick={() => {
+        const downloaded = downloadInvestigationReport(report, selectedProtocol);
+        setStatus(downloaded ? "Relatório preparado para download." : "Não foi possível preparar o relatório.");
+      }}>
+        Baixar relatório (.txt)
+      </button>
+      {status ? <p className="report-download-status" aria-live="polite">{status}</p> : null}
+    </>
+  );
+}
+
 function WorkspaceReportPanel({
   report,
+  investigation,
   selectedProtocol,
   onLoadObservations,
   onFinalizeInvestigation,
@@ -281,58 +404,10 @@ function WorkspaceReportPanel({
   archivedInvestigations = [],
   onRestoreArchivedInvestigation,
   onStartSuggestedProtocol,
+  completedInvestigations = 0,
 }) {
-  const [downloadStatus, setDownloadStatus] = useState("");
-  const [snapshotStatus, setSnapshotStatus] = useState("");
-  const [snapshotError, setSnapshotError] = useState(false);
-
   if (!report) {
     return null;
-  }
-
-  function exportSnapshot() {
-    const downloaded = downloadInvestigationSnapshot(
-      report,
-      selectedProtocol
-    );
-    setSnapshotError(!downloaded);
-    setSnapshotStatus(
-      downloaded
-        ? "Snapshot da investigação preparado para download."
-        : "Não foi possível preparar o snapshot."
-    );
-  }
-
-  function importSnapshot(event) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const observations = parseInvestigationSnapshot(
-          String(reader.result),
-          selectedProtocol
-        );
-        onLoadObservations(observations);
-        setSnapshotError(false);
-        setSnapshotStatus(
-          "Snapshot importado e investigação recalculada."
-        );
-      } catch (error) {
-        setSnapshotError(true);
-        setSnapshotStatus(error.message);
-      }
-    };
-    reader.onerror = () => {
-      setSnapshotError(true);
-      setSnapshotStatus("Não foi possível ler o arquivo selecionado.");
-    };
-    reader.readAsText(file);
   }
 
   return (
@@ -342,62 +417,27 @@ function WorkspaceReportPanel({
         selectedProtocol={selectedProtocol}
       />
 
-      <div className="report-finalization-actions">
-        {report.isFinalized ? (
-          <>
-            <p className="investigation-finalized-notice" role="status">
-              Relatório finalizado pelo aluno em {formatFinalizedDate(report.finalizedAt)}.
-            </p>
-            <button
-              className="secondary-button"
-              type="button"
-              onClick={onReopenInvestigation}
-            >
-              Editar investigação encerrada
-            </button>
-            <button
-              className="secondary-button"
-              type="button"
-              onClick={onStartNewInvestigation}
-            >
-              Iniciar nova investigação
-            </button>
-          </>
-        ) : (
-          <button
-            className="primary-action-button"
-            type="button"
-            onClick={() => {
-              if (window.confirm("Encerrar esta investigação com as hipóteses e observações atuais?")) {
-                onFinalizeInvestigation();
-              }
-            }}
-          >
-            Encerrar investigação
-          </button>
-        )}
-      </div>
+      <ReportFinalizationActions
+        report={report}
+        onFinalize={onFinalizeInvestigation}
+        onReopen={onReopenInvestigation}
+        onStartNew={onStartNewInvestigation}
+      />
 
-      {archivedInvestigations.length ? (
-        <section className="archived-investigations" aria-label="Investigações arquivadas">
-          <span className="report-label">Investigações arquivadas</span>
-          {archivedInvestigations.map((archived, index) => (
-            <div className="archived-investigation-item" key={`${archived.id ?? "investigacao"}-${index}`}>
-              <span>
-                {archived.observations?.length ?? 0} observação(ões)
-                {archived.finalizedAt ? " · encerrada" : " · em andamento"}
-              </span>
-              <button
-                className="secondary-button"
-                type="button"
-                onClick={() => onRestoreArchivedInvestigation(index)}
-              >
-                Editar anterior
-              </button>
-            </div>
-          ))}
-        </section>
-      ) : null}
+      <ArchivedInvestigations
+        investigations={archivedInvestigations}
+        onRestore={onRestoreArchivedInvestigation}
+      />
+
+      <MethodEvaluationCard
+        investigation={investigation}
+        selectedProtocol={selectedProtocol}
+        completedSpecimens={completedInvestigations}
+        methodStage="investigacao"
+        stageComplete={completedInvestigations >= (loadStudyPlan()?.targetSpecimens ?? 1)}
+        specimenCode={investigation?.specimenCode}
+        eventLog={normalizeInvestigationEvents(investigation)}
+      />
 
       {report.nextProtocol ? (
         <section className="report-next-investigation">
@@ -414,54 +454,12 @@ function WorkspaceReportPanel({
         </section>
       ) : null}
 
-      <button
-        className="secondary-button"
-        type="button"
-        onClick={() => {
-          const downloaded = downloadInvestigationReport(
-            report,
-            selectedProtocol
-          );
-
-          setDownloadStatus(
-            downloaded
-              ? "Relatório preparado para download."
-              : "Não foi possível preparar o relatório."
-          );
-        }}
-      >
-        Baixar relatório (.txt)
-      </button>
-      <div className="snapshot-actions">
-        <button
-          className="secondary-button"
-          type="button"
-          onClick={exportSnapshot}
-        >
-          Exportar investigação (.json)
-        </button>
-        <label className="secondary-button snapshot-import-label">
-          Importar investigação (.json)
-          <input
-            type="file"
-            accept="application/json,.json"
-            onChange={importSnapshot}
-          />
-        </label>
-      </div>
-      {downloadStatus ? (
-        <p className="report-download-status" aria-live="polite">
-          {downloadStatus}
-        </p>
-      ) : null}
-      {snapshotStatus ? (
-        <p
-          className={`report-download-status ${snapshotError ? "is-error" : ""}`}
-          role={snapshotError ? "alert" : "status"}
-        >
-          {snapshotStatus}
-        </p>
-      ) : null}
+      <ReportDownloadControl report={report} selectedProtocol={selectedProtocol} />
+      <SnapshotControls
+        report={report}
+        selectedProtocol={selectedProtocol}
+        onLoadObservations={onLoadObservations}
+      />
     </InsightCard>
   );
 }
@@ -489,6 +487,11 @@ function WorkspaceFocusPanel({
         onRegisterObservation={onRegisterObservation}
         onUnregisterObservation={onUnregisterObservation}
         isFinalized={isFinalized}
+      />
+
+      <SpecimenEvaluationCard
+        investigation={investigation}
+        selectedProtocol={selectedProtocol}
       />
 
       <section className="insights-column">
@@ -523,7 +526,10 @@ function WorkspaceFocusPanel({
         </InsightCard>
 
         <InsightCard title="Leitura do professor">
-          <TeacherGuideCard investigation={investigation} />
+          <TeacherGuideCard
+            investigation={investigation}
+            selectedProtocol={selectedProtocol}
+          />
         </InsightCard>
         {investigation?.nextProtocol ? (
           <InsightCard title="Próxima investigação">

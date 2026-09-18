@@ -3,6 +3,7 @@ import { chavesConfig } from "./config/chavesConfig.js";
 import { BrandLogo } from "../../components/ui/BrandLogo.jsx";
 import LabBioMark from "../components/LabBioMark.jsx";
 import LogoMark from "../components/LogoMark.jsx";
+import { createStudyPlan, loadStudyPlan, saveStudyPlan } from "../../utils/methodStudyPlan.js";
 
 export default function ConfigurarSessao({
   mode,
@@ -14,7 +15,10 @@ export default function ConfigurarSessao({
   onStart,
   onRemoverChavePersonalizada,
   onStartArtropode,
+  onChooseDicotomic,
   onStartPesquisador,
+  studyPlanActive = false,
+  onStudyPlanStarted,
   onBack,
 }) {
   const isProva = mode === "prova";
@@ -26,6 +30,26 @@ export default function ConfigurarSessao({
   const [tipoTempo, setTipoTempo] = useState(tempoPorInsetoQr > 0 ? "minutos" : "livre");
   const [minutos, setMinutos] = useState(tempoPorInsetoQr > 0 ? tempoPorInsetoQr : 5);
   const [mostrarChavesFamilia, setMostrarChavesFamilia] = useState(false);
+  const [showStudyPlan, setShowStudyPlan] = useState(false);
+  const [studySpecimens, setStudySpecimens] = useState(String(loadStudyPlan()?.targetSpecimens ?? 1));
+  const [pendingAction, setPendingAction] = useState(null);
+
+  function startWithStudyPlan(action) {
+    if (studyPlanActive && loadStudyPlan()) {
+      action?.();
+      return;
+    }
+    setPendingAction(() => action);
+    setShowStudyPlan(true);
+  }
+
+  function confirmStudyPlan() {
+    saveStudyPlan(createStudyPlan(studySpecimens));
+    onStudyPlanStarted?.();
+    setShowStudyPlan(false);
+    pendingAction?.();
+    setPendingAction(null);
+  }
 
   const ordens = Object.keys(chavesConfig || {}).filter(
     (ordem) => ordem !== "CHAVE PRINCIPAL" && !ordem.includes(" SUB")
@@ -64,20 +88,25 @@ export default function ConfigurarSessao({
         <button
           className="config-sessao-action-card config-sessao-action-card--primary"
           data-testid="config-start-main"
-          onClick={() => onStart?.(mode, aluno, totalFinal, "", gabarito, tempoMinutos)}
+          onClick={() => {
+            if (onChooseDicotomic) {
+              startWithStudyPlan(onChooseDicotomic);
+              return;
+            }
+
+            onStart?.(mode, aluno, totalFinal, "", gabarito, tempoMinutos);
+          }}
         >
           <span>Modo Chave Dicotômica</span>
-          <small>começar pela identificação das ordens</small>
         </button>
 
         {!isProva ? (
           <button
             className="config-sessao-action-card"
             data-testid="config-start-pesquisador"
-            onClick={() => onStartPesquisador?.("pesquisador", aluno, 1)}
+            onClick={() => startWithStudyPlan(() => onStartPesquisador?.("pesquisador", aluno, 1))}
           >
             <span>Modo Investigativo</span>
-            <small>abrir o fluxo investigativo do LABSED</small>
           </button>
         ) : (
           <div style={bloqueioProva}>
@@ -109,6 +138,24 @@ export default function ConfigurarSessao({
           onRemoverChavePersonalizada={onRemoverChavePersonalizada}
           onStart={onStart}
         />
+      ) : null}
+
+      {showStudyPlan ? (
+        <div className="study-plan-backdrop" role="presentation">
+          <section className="study-plan-dialog" role="dialog" aria-modal="true" aria-labelledby="study-plan-title">
+            <h2 id="study-plan-title">Planejar avaliação dos métodos</h2>
+            <p>Para comparar os métodos, o participante deverá usar o Modo Investigativo e a Chave Dicotômica.</p>
+            <label>
+              Quantos insetos ou artrópodes serão observados?
+              <input type="number" min="1" max="100" value={studySpecimens} onChange={(event) => setStudySpecimens(event.target.value)} />
+            </label>
+            <p className="study-plan-hint">Se não informar, será usado o padrão de 1 exemplar. A avaliação parcial ocorre a partir da metade planejada; a final, ao atingir o total.</p>
+            <div className="study-plan-actions">
+              <button className="primary-action-button" type="button" onClick={confirmStudyPlan}>Iniciar planejamento</button>
+              <button className="secondary-button" type="button" onClick={() => { setShowStudyPlan(false); setPendingAction(null); }}>Cancelar</button>
+            </div>
+          </section>
+        </div>
       ) : null}
     </div>
   );

@@ -15,17 +15,14 @@ suggestNextProtocol(
     return null;
   }
 
-  if (
-    protocolId === "ordens-insecta-v1" &&
-    !investigation?.finalizedAt
-  ) {
-    return null;
-  }
+  const currentProtocol = getProtocolById(protocolId);
+  const requiresFinalized = currentProtocol?.investigationPolicy?.requireFinalizedForProgression === true;
 
-  if (
-    protocolId !== "ordens-insecta-v1" &&
-    investigation?.conclusion?.status !== "concluida"
-  ) {
+  if (requiresFinalized) {
+    if (!investigation?.finalizedAt) {
+      return null;
+    }
+  } else if (investigation?.conclusion?.status !== "concluida") {
     return null;
   }
 

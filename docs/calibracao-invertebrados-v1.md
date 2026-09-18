@@ -22,6 +22,11 @@ O motor já protege três comportamentos mínimos:
 | Classes de Arthropoda | tagmas, pernas e antenas; ligação opcional para Insecta | pendente |
 | Classes de Echinodermata | forma corporal, braços e estrutura marcante | pendente |
 
+O protocolo de famílias selecionadas de Coleoptera possui agora uma calibração
+docente própria, com cinco casos representativos — Carabidae, Curculionidae,
+Scarabaeidae, Coccinellidae e Cerambycidae — e um caso incompleto de Carabidae.
+Esses seis casos são executados automaticamente na revisão docente do app.
+
 ## Para cada hipótese
 
 Revise, marque e ajuste quando necessário:

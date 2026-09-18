@@ -7,17 +7,97 @@ import { InvestigationWorkspace } from "./components/InvestigationWorkspace.jsx"
 import { SidebarContextPanel } from "./components/sidebar/SidebarContextPanel.jsx";
 import { useInvestigationSession } from "./hooks/useInvestigationSession.js";
 import { useProtocolSelection } from "./hooks/useProtocolSelection.js";
-import { getProtocolById } from "./config/protocolCatalog.js";
+import { getProtocolById, filterZoologyProtocols } from "./config/protocolCatalog.js";
 import { BrandLogo } from "./components/ui/BrandLogo.jsx";
 import LegacyInsectaKey from "./legacy-insecta/LegacyInsectaKey.jsx";
 import "./legacy-insecta/legacyStyles.css";
 
-export default function App() {
+function UniversePage({
+  domains,
+  selectedDomainId,
+  onDomainChange,
+  groupedProtocols,
+  selectedProtocolId,
+  onProtocolChange,
+  selectedProtocol,
+  domainProtocols,
+  getProtocolMetadata,
+  onInvestigate,
+  onBack,
+}) {
+  return (
+    <main className="start-page">
+      <section className="start-shell">
+        <div className="brand-block start-brand">
+          <BrandLogo />
+          <p>
+            Plataforma educacional baseada em observação, evidência e
+            sustentação de hipóteses.
+          </p>
+        </div>
+        <SidebarContextPanel
+          domains={domains}
+          selectedDomainId={selectedDomainId}
+          onDomainChange={onDomainChange}
+          groupedProtocols={groupedProtocols}
+          selectedProtocolId={selectedProtocolId}
+          onProtocolChange={onProtocolChange}
+          selectedProtocol={selectedProtocol}
+          domainProtocols={domainProtocols}
+          getProtocolMetadata={getProtocolMetadata}
+          actions={
+            <div className="start-actions">
+              <button className="primary-action-button" type="button" onClick={onInvestigate}>
+                Investigar
+              </button>
+              <button className="secondary-button" type="button" onClick={onBack}>
+                Voltar
+              </button>
+            </div>
+          }
+        />
+      </section>
+    </main>
+  );
+}
+
+
+function InvestigationPage({
+  isMenuOpen,
+  onToggleMenu,
+  onCloseMenu,
+  sidebar,
+  workspace,
+}) {
+  return (
+    <>
+      <a className="skip-link" href="#main-content">
+        Ir para o conteúdo principal
+      </a>
+      <button
+        className="sidebar-toggle-button"
+        type="button"
+        aria-expanded={isMenuOpen}
+        aria-controls="investigation-menu-sidebar"
+        aria-label={isMenuOpen ? "Fechar painel de leitura" : "Abrir painel de leitura"}
+        onClick={onToggleMenu}
+      >
+        {isMenuOpen ? "Fechar" : "Leitura"}
+      </button>
+      <button
+        className="mobile-sidebar-backdrop"
+        type="button"
+        aria-label="Fechar menu lateral"
+        onClick={onCloseMenu}
+      />
+      {sidebar}
+      {workspace}
+    </>
+  );
+}
+
+function InvestigativeExperience({ activePage, setActivePage }) {
   const observationRefs = useRef(new Map());
-  const [
-    activePage,
-    setActivePage,
-  ] = useState("insecta-key");
   const [
     activeInvestigationPanel,
     setActiveInvestigationPanel,
@@ -37,19 +117,11 @@ export default function App() {
     groupedProtocols,
     getProtocolMetadata,
   } = useProtocolSelection();
-  const protocoloInsectaId = "ordens-insecta-v1";
-  const dominiosDisponiveis = domains.filter(
-    (domain) => domain.id === "zoologia",
-  );
-  const protocolosInsecta = domainProtocols.filter(
-    (protocol) => protocol.id === protocoloInsectaId,
-  );
-  const gruposInsecta = groupedProtocols
-    .map(([label, items]) => [
-      label,
-      items.filter((protocol) => protocol.id === protocoloInsectaId),
-    ])
-    .filter(([, items]) => items.length > 0);
+  const {
+    domains: dominiosDisponiveis,
+    protocols: protocolosZoologia,
+    groups: gruposZoologia,
+  } = filterZoologyProtocols(domains, domainProtocols, groupedProtocols);
   const {
     investigation,
     report,
@@ -63,6 +135,7 @@ export default function App() {
     startNewInvestigation,
     restoreArchivedInvestigation,
     archivedInvestigations,
+    completedInvestigations,
   } = useInvestigationSession(
     selectedProtocol
   );
@@ -83,6 +156,11 @@ export default function App() {
     });
   }
 
+  function handleLoadObservations(observations) {
+    loadObservations(observations);
+    setActiveInvestigationPanel("investigar");
+  }
+
   function startSuggestedProtocol(protocolId) {
     const protocol = getProtocolById(protocolId);
 
@@ -101,110 +179,32 @@ export default function App() {
         isMenuOpen ? "is-sidebar-open" : ""
       }`}
     >
-      {activePage === "insecta-key" ? (
-        <LegacyInsectaKey
-          onBack={() => setActivePage("universo")}
-          onStartInvestigative={() => {
-            setActivePage("universo");
+      {activePage === "universo" ? (
+        <UniversePage
+          domains={dominiosDisponiveis}
+          selectedDomainId={selectedDomainId}
+          onDomainChange={setSelectedDomainId}
+          groupedProtocols={gruposZoologia}
+          selectedProtocolId={selectedProtocolId}
+          onProtocolChange={setSelectedProtocolId}
+          selectedProtocol={selectedProtocol}
+          domainProtocols={protocolosZoologia}
+          getProtocolMetadata={getProtocolMetadata}
+          onInvestigate={() => {
+            setActivePage("investigar");
+            setActiveInvestigationPanel("investigar");
           }}
+          onBack={() => setActivePage("insecta-key")}
         />
-      ) : activePage === "universo" ? (
-        <main className="start-page">
-          <section className="start-shell">
-            <div className="brand-block start-brand">
-              <BrandLogo />
-              <p>
-                Plataforma educacional
-                baseada em observação,
-                evidência e sustentação de
-                hipóteses.
-              </p>
-            </div>
-
-            <SidebarContextPanel
-              domains={dominiosDisponiveis}
-              selectedDomainId={
-                selectedDomainId
-              }
-              onDomainChange={
-                setSelectedDomainId
-              }
-              groupedProtocols={gruposInsecta}
-              selectedProtocolId={
-                selectedProtocolId
-              }
-              onProtocolChange={
-                setSelectedProtocolId
-              }
-              selectedProtocol={
-                selectedProtocol
-              }
-              domainProtocols={protocolosInsecta}
-              getProtocolMetadata={getProtocolMetadata}
-              actions={
-                <div className="start-actions">
-                  <button
-                    className="primary-action-button"
-                    type="button"
-                    onClick={() => {
-                      setActivePage("investigar");
-                      setActiveInvestigationPanel(
-                        "investigar"
-                      );
-                    }}
-                  >
-                    Investigar
-                  </button>
-                  <button
-                    className="secondary-button"
-                    type="button"
-                    onClick={() => setActivePage("insecta-key")}
-                  >
-                    Voltar
-                  </button>
-                </div>
-              }
-            />
-          </section>
-        </main>
       ) : (
-        <>
-          <a
-            className="skip-link"
-            href="#main-content"
-          >
-            Ir para o conteúdo principal
-          </a>
-
-          <button
-            className="sidebar-toggle-button"
-            type="button"
-            aria-expanded={isMenuOpen}
-            aria-controls="investigation-menu-sidebar"
-            aria-label={
-              isMenuOpen
-                ? "Fechar painel de leitura"
-                : "Abrir painel de leitura"
-            }
-            onClick={() =>
-              setIsMenuOpen(
-                (current) => !current
-              )
-            }
-          >
-            {isMenuOpen ? "Fechar" : "Leitura"}
-          </button>
-
-          <button
-            className="mobile-sidebar-backdrop"
-            type="button"
-            aria-label="Fechar menu lateral"
-            onClick={() =>
-              setIsMenuOpen(false)
-            }
-          />
-
-          <InvestigationMenuSidebar
+        <InvestigationPage
+          isMenuOpen={isMenuOpen}
+          onToggleMenu={() =>
+            setIsMenuOpen((current) => !current)
+          }
+          onCloseMenu={() => setIsMenuOpen(false)}
+          sidebar={
+            <InvestigationMenuSidebar
             id="investigation-menu-sidebar"
             selectedProtocol={
               selectedProtocol
@@ -212,8 +212,9 @@ export default function App() {
             report={report}
             leader={leader}
           />
-
-          <InvestigationWorkspace
+          }
+          workspace={
+            <InvestigationWorkspace
             selectedProtocol={
               selectedProtocol
             }
@@ -239,14 +240,10 @@ export default function App() {
             onUnregisterObservation={
               unregisterObservation
             }
-            onLoadCalibrationCase={(scenario) => {
-              loadObservations(scenario.observations);
-              setActiveInvestigationPanel("investigar");
-            }}
-            onLoadObservations={(observations) => {
-              loadObservations(observations);
-              setActiveInvestigationPanel("investigar");
-            }}
+            onLoadCalibrationCase={(scenario) =>
+              handleLoadObservations(scenario.observations)
+            }
+            onLoadObservations={handleLoadObservations}
             onFinalizeInvestigation={finalizeInvestigation}
             onReopenInvestigation={reopenInvestigation}
             onStartNewInvestigation={() => {
@@ -254,6 +251,7 @@ export default function App() {
               setActiveInvestigationPanel("investigar");
             }}
             archivedInvestigations={archivedInvestigations}
+            completedInvestigations={completedInvestigations}
             onRestoreArchivedInvestigation={restoreArchivedInvestigation}
             onHighlightStructure={
               highlightStructure
@@ -265,8 +263,34 @@ export default function App() {
               startSuggestedProtocol
             }
           />
-        </>
+          }
+        />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  const [activePage, setActivePage] = useState("insecta-key");
+  const [studyPlanActive, setStudyPlanActive] = useState(false);
+
+  if (activePage === "insecta-key") {
+    return (
+      <div className="app-shell app-shell-insecta-key">
+        <LegacyInsectaKey
+          onBack={() => setActivePage("universo")}
+          onStartInvestigative={() => setActivePage("universo")}
+          studyPlanActive={studyPlanActive}
+          onStudyPlanStarted={() => setStudyPlanActive(true)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <InvestigativeExperience
+      activePage={activePage}
+      setActivePage={setActivePage}
+    />
   );
 }

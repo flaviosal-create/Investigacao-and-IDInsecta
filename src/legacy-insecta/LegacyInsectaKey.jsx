@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ConfigurarSessao from "./chaves/ConfigurarSessao.jsx";
+import EscolherChaveDicotomica from "./chaves/EscolherChaveDicotomica.jsx";
 import {
   chaveArtropodes,
   chavesConfig,
@@ -7,7 +8,7 @@ import {
 import ChaveBase from "./components/ChaveBase.jsx";
 import { normalizar } from "./utils/text.js";
 
-export default function LegacyInsectaKey({ onBack, onStartInvestigative }) {
+export default function LegacyInsectaKey({ onBack, onStartInvestigative, studyPlanActive = false, onStudyPlanStarted }) {
   const [screen, setScreen] = useState("config");
   const [activeKey, setActiveKey] = useState("CHAVE PRINCIPAL");
 
@@ -20,6 +21,16 @@ export default function LegacyInsectaKey({ onBack, onStartInvestigative }) {
     const requested = ordem ? String(ordem).toUpperCase() : "CHAVE PRINCIPAL";
     const key = availableKeys[requested] ? requested : "CHAVE PRINCIPAL";
     setActiveKey(key);
+    setScreen("key");
+  }
+
+  function startInsectaKey() {
+    setActiveKey("CHAVE PRINCIPAL");
+    setScreen("key");
+  }
+
+  function startArthropodaKey() {
+    setActiveKey("CHAVE ARTROPODES");
     setScreen("key");
   }
 
@@ -45,11 +56,26 @@ export default function LegacyInsectaKey({ onBack, onStartInvestigative }) {
           aluno=""
           chavesPersonalizadas={[]}
           onStart={startKey}
+          onChooseDicotomic={() => setScreen("choose")}
           onStartArtropode={() => {
             setActiveKey("CHAVE ARTROPODES");
             setScreen("key");
           }}
           onStartPesquisador={() => onStartInvestigative?.()}
+          studyPlanActive={studyPlanActive}
+          onStudyPlanStarted={onStudyPlanStarted}
+        />
+      </div>
+    );
+  }
+
+  if (screen === "choose") {
+    return (
+      <div className="legacy-insecta-page">
+        <EscolherChaveDicotomica
+          onSelectInsecta={startInsectaKey}
+          onSelectArthropoda={startArthropodaKey}
+          onBack={() => setScreen("config")}
         />
       </div>
     );

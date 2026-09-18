@@ -29,10 +29,12 @@ import {
  * Cria uma nova investigação.
  */
 export function startInvestigation(
-  protocolId
+  protocolId,
+  metadata = {}
 ) {
   return createInvestigation({
     protocolId,
+    specimenCode: metadata.specimenCode ?? "",
   });
 }
 
@@ -50,6 +52,8 @@ export function addObservation(
       protocol
     );
   }
+
+  const timestamp = new Date().toISOString();
 
   const existingObservation =
     investigation.observations.find(
@@ -93,13 +97,12 @@ export function addObservation(
         value:
           observation.value,
 
-        timestamp:
-          new Date().toISOString(),
+        timestamp,
       },
     ],
 
     updatedAt:
-      new Date().toISOString(),
+      timestamp,
   };
 }
 
@@ -198,84 +201,24 @@ export function runInvestigation(
     }
   );
 
-  const hypotheses =
-    calculateHypotheses(
-      investigation.observations,
-      protocol
-    );
-
-  const suggestion =
-    suggestObservation(
-      investigation.observations,
-      protocol,
-      hypotheses
-    );
-
-  const conclusion =
-    calculateConclusion(
-      hypotheses,
-      {
-        observations:
-          investigation.observations,
-        policy:
-          protocol.investigationPolicy,
-      }
-    );
-
-  const decision =
-    makeDecision(
-      hypotheses,
-      conclusion
-    );
-
-  const interpretation =
-    generateInterpretation({
-    hypotheses,
-  });
-
-  const nextProtocol =
-  suggestNextProtocol(
-    protocol.id,
-    {
-      hypotheses,
-      conclusion,
-      finalizedAt: investigation.finalizedAt,
-    }
+  const derivedResults = calculateDerivedResults(
+    investigation,
+    protocol
   );
+  const {
+    hypotheses,
+    suggestion,
+    conclusion,
+    decision,
+    interpretation,
+    nextProtocol,
+  } = derivedResults;
 
-  const leader =
-    hypotheses.length > 0
-      ? hypotheses[0]
-      : null;
-
-  const lastHypothesisUpdate = [...investigation.history]
-    .reverse()
-    .find((entry) => entry.type === "hypothesis-update");
-
-  const leaderName = leader?.isLeader ? leader.name : null;
-  const leaderScore = leader?.score ?? null;
-
-  const hasLeaderChanged =
-    !lastHypothesisUpdate ||
-    lastHypothesisUpdate.leader !== leaderName ||
-    lastHypothesisUpdate.score !== leaderScore;
-
-  const history = hasLeaderChanged
-    ? [
-        ...investigation.history,
-
-        {
-          type: "hypothesis-update",
-
-          leader: leaderName,
-
-          score: leaderScore,
-
-          timestamp:
-            new Date().toISOString(),
-        },
-      ]
-    : investigation.history;
+  const history = updateHypothesisHistory(
+    investigation.history,
+    hypotheses,
+    new Date().toISOString()
+  );
 
   return {
     ...investigation,
@@ -297,6 +240,56 @@ export function runInvestigation(
     updatedAt:
       new Date().toISOString(),
   };
+}
+
+function calculateDerivedResults(investigation, protocol) {
+  const { observations, finalizedAt } = investigation;
+  const hypotheses = calculateHypotheses(observations, protocol);
+  const suggestion = suggestObservation(observations, protocol, hypotheses);
+  const conclusion = calculateConclusion(hypotheses, {
+    observations,
+    policy: protocol.investigationPolicy,
+  });
+
+  return {
+    hypotheses,
+    suggestion,
+    conclusion,
+    decision: makeDecision(hypotheses, conclusion),
+    interpretation: generateInterpretation({ hypotheses }),
+    nextProtocol: suggestNextProtocol(protocol.id, {
+      hypotheses,
+      conclusion,
+      finalizedAt,
+    }),
+  };
+}
+
+function updateHypothesisHistory(history, hypotheses, timestamp) {
+  const leader = hypotheses[0] ?? null;
+  const lastUpdate = [...history]
+    .reverse()
+    .find((entry) => entry.type === "hypothesis-update");
+  const leaderName = leader?.name ?? null;
+  const leaderScore = leader?.score ?? null;
+
+  if (
+    lastUpdate &&
+    lastUpdate.leader === leaderName &&
+    lastUpdate.score === leaderScore
+  ) {
+    return history;
+  }
+
+  return [
+    ...history,
+    {
+      type: "hypothesis-update",
+      leader: leaderName,
+      score: leaderScore,
+      timestamp,
+    },
+  ];
 }
 
 function validateObservation(

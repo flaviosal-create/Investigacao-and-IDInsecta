@@ -12,14 +12,13 @@ import {
 } from "./reportEngine.js";
 
 export function startSession(
-  protocol
+  protocol,
+  metadata = {}
 ) {
   return {
     protocol,
     investigation:
-      startInvestigation(
-        protocol.id
-      ),
+      startInvestigation(protocol.id, metadata),
     archivedInvestigations: [],
   };
 }

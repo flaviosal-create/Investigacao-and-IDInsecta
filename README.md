@@ -26,14 +26,14 @@ npm run dev
 ```
 
 Para abrir uma sessão local limpa, removendo os caches gerados do Vite e
-escolhendo automaticamente uma porta livre a partir da 5175:
+escolhendo automaticamente uma porta livre a partir da 5173:
 
 ```bash
 npm run dev:fresh
 ```
 
-Use o endereço exibido no terminal. Se a porta 5175 estiver ocupada por outra
-versão, o comando usará 5176, 5177 e assim por diante sem encerrar outro projeto.
+Use o endereço exibido no terminal. Se a porta 5173 estiver ocupada por outra
+versão, o comando usará 5174, 5175 e assim por diante sem encerrar outro projeto.
 
 Para criar a versão de produção:
 

@@ -2,6 +2,7 @@ import {
   lazy,
   Suspense,
   useCallback,
+  useEffect,
   useState,
 } from "react";
 import LayoutChave from "../components/LayoutChave.jsx";
@@ -17,6 +18,8 @@ import Breadcrumb from "./Breadcrumb.jsx";
 import { useToast } from "../hooks/useToast.js";
 import { useChaveIdentificacao } from "../hooks/useChaveIdentificacao.js";
 import { useRelatorioIdentificacao } from "../hooks/useRelatorioIdentificacao.js";
+import { MethodEvaluationCard } from "../../components/MethodEvaluationCard.jsx";
+import { normalizeKeyEvents, getSpecimenCode } from "../../utils/studyInstrumentation.js";
 import {
   formatarTempoProva,
   formatarResultado,
@@ -33,6 +36,35 @@ import {
 /* ====================== HELPERS ====================== */
 
 const Modelo3DAranha = lazy(() => import("./Modelo3DAranha.jsx"));
+
+function ResultMedia({ result, resultChoice }) {
+  if (resultChoice?.has3d) {
+    return (
+      <div style={{ marginTop: 16 }}>
+        <Suspense fallback={<Placeholder3D label="Carregando modelo 3D..." />}>
+          <Modelo3DAranha src={resultChoice.model3d} />
+        </Suspense>
+      </div>
+    );
+  }
+
+  if (resultChoice?.image) {
+    return (
+      <div style={{ marginTop: 16 }}>
+        <img
+          src={resultChoice.image}
+          alt="Resultado"
+          style={{
+            width: "100%", maxWidth: 420, borderRadius: 16, display: "block",
+            margin: "0 auto", boxShadow: "0 12px 28px rgba(15,23,42,0.12)",
+          }}
+        />
+      </div>
+    );
+  }
+
+  return <Placeholder3D titulo={formatarResultado(result)} />;
+}
 
 /* ====================== ESTILOS ====================== */
 
@@ -91,6 +123,111 @@ const btnFinalizar = {
   wordBreak: "break-word",
   transition: "var(--btn-transition)",
 };
+
+function KeyResultView({ view }) {
+  const {
+    result, resultChoice, isProva, aluno, ordemContextoAtual, caminhoTaxonomico,
+    registro, caminhoPercorrido, onNextInseto, permiteProximoInseto, onReset,
+    onResetToPrincipal, onOpenSession, isSubKey, onBack, handleExportTXT,
+    handleExportPDF, rotuloItem, insetoIndex, totalInsetos, fotoInseto,
+    handleFotoInsetoChange, fotoInsetoEdicaoConcluida,
+    handleFotoInsetoEdicaoConcluidaChange, fotoInsetoSetas,
+    handleFotoInsetoSetasChange, chaveId, titulo, rotuloFoto,
+  } = view;
+
+  return (
+    <ResultadoCard
+      tag={resultChoice?.has3d ? "Modelo 3D" : resultChoice?.image ? "Imagem" : "Resultado"}
+      tituloResultado={formatarResultado(result)} isProva={isProva} aluno={aluno}
+      ordemContextoAtual={ordemContextoAtual} caminhoTaxonomico={caminhoTaxonomico}
+      registro={registro} caminhoPercorrido={caminhoPercorrido} onNextInseto={onNextInseto}
+      permiteProximoInseto={permiteProximoInseto} onReset={onReset}
+      onResetToPrincipal={onResetToPrincipal} onOpenSession={onOpenSession}
+      isSubKey={isSubKey} onBack={onBack} baixarTXT={handleExportTXT}
+      salvarPDFviaPrint={handleExportPDF} btnExport={btnExport} btnProximo={btnProximo}
+      btnFinalizar={btnFinalizar} rotuloItem={rotuloItem} insetoIndex={insetoIndex}
+      totalInsetos={totalInsetos}
+    >
+      <ResultMedia result={result} resultChoice={resultChoice} />
+      {!fotoInseto ? (
+        <FotoInsetoControl titulo={rotuloFoto} alt={rotuloFoto} fotoInseto={fotoInseto} onFotoInsetoChange={handleFotoInsetoChange} />
+      ) : null}
+      <FotoInsetoAnotacaoEditor
+        foto={fotoInseto} edicaoConcluida={fotoInsetoEdicaoConcluida}
+        onEdicaoConcluidaChange={handleFotoInsetoEdicaoConcluidaChange}
+        setas={fotoInsetoSetas} onSetasChange={handleFotoInsetoSetasChange}
+        onFotoChange={handleFotoInsetoChange} rotuloFoto={rotuloFoto}
+        titulo="Identificações na foto"
+      />
+      <MethodEvaluationCard
+        evaluationId={`${chaveId || titulo}-${result}`} protocolId={chaveId || titulo}
+        method="chave-dicotomica"
+        methodLabel={chaveId === "CHAVE ARTROPODES" ? "Chave de Arthropoda" : "Chave de Insecta"}
+        methodStage="chave-dicotomica"
+        stageComplete={insetoIndex >= totalInsetos}
+        specimenCode={getSpecimenCode(insetoIndex)}
+        eventLog={normalizeKeyEvents(registro, result)}
+      />
+    </ResultadoCard>
+  );
+}
+
+function StructuralError({ currentId, availableIds }) {
+  return (
+    <div style={{ padding: 20 }}>
+      <div style={{ fontWeight: 700, marginBottom: 8 }}>
+        Erro: nó "{String(currentId)}" não encontrado
+      </div>
+      <div style={{ color: "var(--color-muted)", marginBottom: 10 }}>
+        Verifique se esse id existe na configuração da chave.
+      </div>
+      <div
+        style={{
+          background: "var(--color-surface-soft)",
+          border: "1px solid var(--color-border)",
+          borderRadius: 12,
+          padding: 12,
+          fontSize: 14,
+          color: "var(--color-text)",
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        IDs disponíveis: {availableIds.length ? availableIds.join(", ") : "nenhum"}
+      </div>
+    </div>
+  );
+}
+
+function LoadingOverlay() {
+  return (
+    <div style={{
+      position: "fixed", inset: 0, display: "flex", alignItems: "center",
+      justifyContent: "center", background: "rgba(255, 255, 255, 0.95)",
+      zIndex: 1000, backdropFilter: "blur(2px)",
+    }}>
+      <SkeletonLoader type="card" count={1} />
+    </div>
+  );
+}
+
+function NavigationProgress({ isProva, history, currentId, ordem, onNavigate }) {
+  if (isProva) return null;
+
+  const path = history.map((item, index) => ({
+    id: item.id,
+    title: item.title,
+    number: index + 1,
+  }));
+
+  return (
+    <>
+      <ProgressBar current={history.length + 1} total={Math.max(5, history.length + 2)} label={ordem} />
+      {path.length ? (
+        <Breadcrumb path={path} currentId={currentId} onNavigate={onNavigate} />
+      ) : null}
+    </>
+  );
+}
 
 /* ====================== COMPONENTE PRINCIPAL ====================== */
 
@@ -175,6 +312,13 @@ export default function ChaveBase({
 
   const permiteProximoInseto = isProva ? insetoIndex < totalInsetos : true;
 
+  useEffect(() => {
+    if (!isLoading) return undefined;
+
+    const loadingTimer = window.setTimeout(() => setIsLoading(false), 600);
+    return () => window.clearTimeout(loadingTimer);
+  }, [currentId, isLoading]);
+
   const tempoProvaTexto = formatarTempoProva({
     isProva,
     tempoPorInsetoMin,
@@ -190,7 +334,7 @@ export default function ChaveBase({
 
   const pick = (key) => {
     setIsLoading(true);
-    
+
     if (!node || typeof node !== "object") {
       console.warn(`[${titulo}] Node inválido: ${String(currentId)}`);
       setResult("ERRO ESTRUTURAL NA CHAVE");
@@ -232,6 +376,7 @@ export default function ChaveBase({
         }) === true;
 
       if (routed) {
+        setIsLoading(false);
         return;
       }
 
@@ -274,9 +419,6 @@ export default function ChaveBase({
     }
 
     setCurrentId(nextId);
-    
-    // Desativar loading após a transição
-    setTimeout(() => setIsLoading(false), 600);
   };
 
   // ✅ Wrappers para handlers de export com Toast
@@ -313,17 +455,6 @@ export default function ChaveBase({
     setRegistro((prev) => prev.slice(0, index));
   };
 
-  // Montar breadcrumb path para navegação
-  const breadcrumbPath = history.map((item, idx) => ({
-    id: item.id,
-    title: item.title,
-    number: idx + 1,
-  }));
-
-  // Calcular progresso: current (history.length + 1 pois estamos na próxima), total (estimado)
-  const progressTotal = Math.max(5, history.length + 2); // Mínimo 5, ou histórico + margem
-  const progressCurrent = history.length + 1;
-
   const caminhoPercorrido = formatarCaminhoPercorrido(registro);
 
   const { baixarTXT, salvarPDFviaPrint } = useRelatorioIdentificacao({
@@ -341,56 +472,13 @@ export default function ChaveBase({
   });
 
   if (!node && !result) {
-    const disponiveis = idsDisponiveis(nodeMap);
-
-    return (
-      <div style={{ padding: 20 }}>
-        <div style={{ fontWeight: 700, marginBottom: 8 }}>
-          Erro: nó "{String(currentId)}" não encontrado
-        </div>
-
-        <div style={{ color: "var(--color-muted)", marginBottom: 10 }}>
-          Verifique se esse id existe na configuração da chave.
-        </div>
-
-        <div
-          style={{
-            background: "var(--color-surface-soft)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 12,
-            padding: 12,
-            fontSize: 14,
-            color: "var(--color-text)",
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          IDs disponíveis:{" "}
-          {disponiveis.length ? disponiveis.join(", ") : "nenhum"}
-        </div>
-      </div>
-    );
+    return <StructuralError currentId={currentId} availableIds={idsDisponiveis(nodeMap)} />;
   }
 
  return (
   <>
     <ToastContainer toasts={toasts} onRemove={removeToast} />
-    {isLoading && (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(255, 255, 255, 0.95)',
-        zIndex: 1000,
-        backdropFilter: 'blur(2px)'
-      }}>
-        <SkeletonLoader type="card" count={1} />
-      </div>
-    )}
+    {isLoading ? <LoadingOverlay /> : null}
     <LayoutChave
       title={tituloExibicao}
       onBack={isProva ? undefined : onBack}
@@ -408,114 +496,24 @@ export default function ChaveBase({
     showResult={!!result}
   >
     {result ? (
-  <ResultadoCard
-    tag={
-      resultChoice?.has3d
-        ? "Modelo 3D"
-        : resultChoice?.image
-        ? "Imagem"
-        : "Resultado"
-    }
-    tituloResultado={formatarResultado(result)}
-    isProva={isProva}
-    aluno={aluno}
-    ordemContextoAtual={ordemContextoAtual}
-    caminhoTaxonomico={caminhoTaxonomico}
-    registro={registro}
-    caminhoPercorrido={caminhoPercorrido}
-    onNextInseto={onNextInseto}
-    permiteProximoInseto={permiteProximoInseto}
-    onReset={onReset}
-    onResetToPrincipal={onResetToPrincipal}
-    onOpenSession={onOpenSession}
-    isSubKey={isSubKey}
-    onBack={onBack}
-    baixarTXT={handleExportTXT}
-    salvarPDFviaPrint={handleExportPDF}
-    btnExport={btnExport}
-    btnProximo={btnProximo}
-    btnFinalizar={btnFinalizar}
-    rotuloItem={rotuloItem}
-    insetoIndex={insetoIndex}
-    totalInsetos={totalInsetos}
-  >
+      <KeyResultView view={{
+        result, resultChoice, isProva, aluno, ordemContextoAtual, caminhoTaxonomico,
+        registro, caminhoPercorrido, onNextInseto, permiteProximoInseto, onReset,
+        onResetToPrincipal, onOpenSession, isSubKey, onBack, handleExportTXT,
+        handleExportPDF, rotuloItem, insetoIndex, totalInsetos, fotoInseto,
+        handleFotoInsetoChange, fotoInsetoEdicaoConcluida,
+        handleFotoInsetoEdicaoConcluidaChange, fotoInsetoSetas,
+        handleFotoInsetoSetasChange, chaveId, titulo, rotuloFoto,
+      }} />
 
-    {/* 🔹 MODELO 3D */}
-    {resultChoice?.has3d ? (
-      <div style={{ marginTop: 16 }}>
-        <Suspense fallback={<Placeholder3D label="Carregando modelo 3D..." />}>
-          <Modelo3DAranha src={resultChoice.model3d} />
-        </Suspense>
-      </div>
-    ) : resultChoice?.image ? (
-
-      /* 🔹 IMAGEM */
-      <div style={{ marginTop: 16 }}>
-        <img
-          src={resultChoice.image}
-          alt="Resultado"
-          style={{
-            width: "100%",
-            maxWidth: 420,
-            borderRadius: 16,
-            display: "block",
-            margin: "0 auto",
-            boxShadow: "0 12px 28px rgba(15,23,42,0.12)",
-          }}
-        />
-      </div>
-
-    ) : (
-
-      /* 🔹 PLACEHOLDER */
-      <Placeholder3D titulo={formatarResultado(result)} />
-
-    )}
-
-    {!fotoInseto ? (
-      <FotoInsetoControl
-        titulo={rotuloFoto}
-        alt={rotuloFoto}
-        fotoInseto={fotoInseto}
-        onFotoInsetoChange={handleFotoInsetoChange}
-      />
-    ) : null}
-
-    <FotoInsetoAnotacaoEditor
-      foto={fotoInseto}
-      edicaoConcluida={fotoInsetoEdicaoConcluida}
-      onEdicaoConcluidaChange={handleFotoInsetoEdicaoConcluidaChange}
-      setas={fotoInsetoSetas}
-      onSetasChange={handleFotoInsetoSetasChange}
-      onFotoChange={handleFotoInsetoChange}
-      rotuloFoto={rotuloFoto}
-      titulo="Identificações na foto"
-    />
-
-  </ResultadoCard>
 ) : (
-  <div style={{ width: "100%" }}>
-    {/* Progress Bar */}
-    {!isProva && (
-      <ProgressBar
-        current={progressCurrent}
-        total={progressTotal}
-        label={ordemContextoAtual}
-      />
-    )}
-
-    {/* Breadcrumb Interativo */}
-    {!isProva && breadcrumbPath.length > 0 && (
-      <Breadcrumb
-        path={breadcrumbPath}
-        currentId={currentId}
-        onNavigate={handleHistorySelect}
-      />
-    )}
-
-    {/* Pergunta Atual */}
-    <PerguntaAtual node={node} pick={pick} mode={mode} />
-  </div>
+      <div style={{ width: "100%" }}>
+        <NavigationProgress
+          isProva={isProva} history={history} currentId={currentId}
+          ordem={ordemContextoAtual} onNavigate={handleHistorySelect}
+        />
+        <PerguntaAtual node={node} pick={pick} mode={mode} />
+      </div>
 )}
   </LayoutChave>
   </>

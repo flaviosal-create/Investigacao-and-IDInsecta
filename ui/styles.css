@@ -1405,6 +1405,349 @@ button:disabled {
   margin: 3px 0 0;
 }
 
+.calibration-approval-status {
+  border: 1px solid #dbe4ef;
+  border-radius: 7px;
+  display: grid;
+  gap: 3px;
+  margin: 0 0 14px;
+  padding: 10px;
+}
+
+.calibration-approval-status.is-pending {
+  background: #fff7e7;
+  border-color: #f0dfb7;
+  color: #8a4a05;
+}
+
+.calibration-approval-status.is-approved {
+  background: #eff9f2;
+  border-color: #d5e8da;
+  color: #176237;
+}
+
+.calibration-approval-status span {
+  font-size: 0.82rem;
+}
+
+.calibration-approval-controls {
+  border-top: 1px solid #dbe4ef;
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.calibration-approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.calibration-approval-actions .secondary-button.is-selected {
+  background: #e7f7ed;
+  border-color: #8ac79a;
+  color: #176237;
+}
+
+.calibration-approval-actions .secondary-button.is-selected.is-warning {
+  background: #fff0df;
+  border-color: #e0b36f;
+  color: #8a4a05;
+}
+
+.calibration-note-field {
+  display: grid;
+  gap: 5px;
+}
+
+.calibration-note-field span {
+  color: #51627e;
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+.calibration-note-field textarea {
+  border: 1px solid #cbd7e6;
+  border-radius: 6px;
+  color: #162033;
+  font: inherit;
+  padding: 8px;
+  resize: vertical;
+}
+
+.method-evaluation-card {
+  background: #fbfcfe;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 15px;
+}
+
+.method-evaluation-card h3,
+.method-evaluation-card p {
+  margin: 0;
+}
+
+.method-evaluation-card h3 {
+  color: #162033;
+  font-size: 1.1rem;
+}
+
+.method-evaluation-card p {
+  color: #51627e;
+  font-size: 0.9rem;
+}
+
+.method-evaluation-questions {
+  display: grid;
+  gap: 10px;
+}
+
+.method-study-planning {
+  border-top: 1px solid #dbe4ef;
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.method-study-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.method-study-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.method-study-grid label > span,
+.method-study-planning legend {
+  color: #51627e;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.method-study-grid input,
+.method-study-grid select {
+  border: 1px solid #cbd7e6;
+  border-radius: 6px;
+  color: #162033;
+  font: inherit;
+  min-height: 36px;
+  padding: 7px 8px;
+}
+
+.method-study-planning fieldset {
+  border: 1px solid #dbe4ef;
+  border-radius: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 0;
+  padding: 9px 10px;
+}
+
+.method-study-planning fieldset label {
+  color: #162033;
+  font-size: 0.82rem;
+}
+
+.method-specimen-log {
+  display: grid;
+  gap: 8px;
+}
+
+.method-specimen-row {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(90px, 1fr) repeat(2, minmax(0, 1fr));
+}
+
+.method-specimen-row strong {
+  color: #162033;
+  font-size: 0.82rem;
+}
+
+.method-specimen-row select {
+  border: 1px solid #cbd7e6;
+  border-radius: 6px;
+  color: #162033;
+  font: inherit;
+  min-height: 34px;
+  padding: 6px;
+}
+
+.method-evaluation-questions fieldset {
+  border: 1px solid #dbe4ef;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+  margin: 0;
+  min-width: 0;
+  padding: 10px;
+}
+
+.method-evaluation-questions legend {
+  color: #162033;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 0;
+}
+
+.method-rating {
+  display: flex;
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+.method-rating label {
+  color: #51627e;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.method-rating input {
+  position: absolute;
+  opacity: 0;
+}
+
+.method-rating span {
+  align-items: center;
+  border: 1px solid #cbd7e6;
+  border-radius: 50%;
+  display: flex;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.method-rating input:checked + span {
+  background: #e7f0ff;
+  border-color: #2e6fe0;
+  color: #1e4eaa;
+  font-weight: 800;
+}
+
+.method-rating input:focus-visible + span {
+  outline: 3px solid rgba(46, 111, 224, 0.32);
+  outline-offset: 2px;
+}
+
+.method-evaluation-comment {
+  display: grid;
+  gap: 5px;
+}
+
+.method-evaluation-comment span {
+  color: #51627e;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.method-evaluation-comment textarea {
+  border: 1px solid #cbd7e6;
+  border-radius: 6px;
+  color: #162033;
+  font: inherit;
+  padding: 8px;
+  resize: vertical;
+}
+
+.method-evaluation-footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.method-evaluation-footer > span {
+  color: #176237;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.method-dashboard {
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+.method-dashboard-header,
+.method-dashboard-actions {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+}
+.method-dashboard-header h2 { color: #162033; margin: 4px 0 6px; }
+.method-dashboard-header p { color: #51627e; margin: 0; max-width: 720px; }
+.method-dashboard-import { cursor: pointer; flex-shrink: 0; }
+.method-dashboard-import input { display: none; }
+.method-dashboard-empty { color: #51627e; margin: 0; }
+.method-dashboard-actions { align-items: center; color: #51627e; font-size: .85rem; }
+.method-dashboard-table-wrap { overflow-x: auto; }
+.method-dashboard-table { border-collapse: collapse; min-width: 760px; width: 100%; }
+.method-dashboard-table caption { color: #162033; font-weight: 800; margin-bottom: 8px; text-align: left; }
+.method-dashboard-table th,
+.method-dashboard-table td { border-bottom: 1px solid #dbe4ef; padding: 9px 8px; text-align: left; }
+.method-dashboard-table thead th { color: #51627e; font-size: .76rem; text-transform: capitalize; }
+.method-dashboard-table tbody th { color: #162033; }
+.method-dashboard-table td { color: #334155; font-variant-numeric: tabular-nums; }
+.method-dashboard-context { color: #51627e; display: flex; flex-wrap: wrap; gap: 12px 22px; font-size: .84rem; }
+.method-dashboard-comments { border-top: 1px solid #dbe4ef; display: grid; gap: 8px; padding-top: 12px; }
+.method-dashboard-comments blockquote { border-left: 3px solid #8db2f2; color: #334155; margin: 0; padding-left: 10px; }
+.method-dashboard-comments p { color: #51627e; margin: 0; }
+
+.specimen-evaluation-card {
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 15px;
+}
+.specimen-evaluation-card h3,
+.specimen-evaluation-card p { margin: 0; }
+.specimen-evaluation-card h3 { color: #162033; font-size: 1.05rem; }
+.specimen-evaluation-card p { color: #51627e; font-size: .88rem; }
+.specimen-evaluation-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.specimen-evaluation-grid label,
+.specimen-evaluation-comment { display: grid; gap: 5px; }
+.specimen-evaluation-grid label > span,
+.specimen-evaluation-comment > span { color: #51627e; font-size: .78rem; font-weight: 700; }
+.specimen-evaluation-grid select,
+.specimen-evaluation-comment textarea { border: 1px solid #cbd7e6; border-radius: 6px; color: #162033; font: inherit; min-height: 35px; padding: 7px; }
+.specimen-evaluation-comment textarea { resize: vertical; }
+.specimen-evaluation-footer { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; }
+.specimen-evaluation-footer > span { color: #176237; font-size: .82rem; font-weight: 700; }
+
+@media (max-width: 620px) {
+  .method-study-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .method-specimen-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .method-specimen-row strong {
+    grid-column: 1 / -1;
+  }
+  .method-dashboard-header,
+  .method-dashboard-actions { flex-direction: column; }
+  .method-dashboard-import { width: 100%; }
+  .specimen-evaluation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .calibration-observation-list {
   display: flex;
   flex-wrap: wrap;
@@ -3144,7 +3487,6 @@ button:disabled {
 .app-shell-investigar .insect-thermometer-icon path {
   stroke: #244b3d;
 }
-
 /* Keep the hypothesis evaluation readable in the compact right-hand panel. */
 .app-shell-investigar .thermometer-order-heading strong {
   white-space: normal;
@@ -3360,3 +3702,29 @@ button:disabled {
   white-space: normal;
   overflow-wrap: anywhere;
 }
+
+.study-plan-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.study-plan-dialog {
+  width: min(100%, 34rem);
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.study-plan-dialog h2 { margin-top: 0; }
+.study-plan-dialog label { display: grid; gap: .45rem; font-weight: 700; }
+.study-plan-dialog input { width: 100%; box-sizing: border-box; }
+.study-plan-hint { color: var(--color-muted); font-size: .9rem; }
+.study-plan-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+.report-finalization-actions button:disabled { opacity: .55; cursor: not-allowed; }

@@ -2,9 +2,11 @@ import {
   formatStructure,
   formatValue,
 } from "../../utils/presentation.js";
+import { suggestObservation } from "../../engine/SuggestionEngine.js";
 
 export function TeacherGuideCard({
   investigation,
+  selectedProtocol,
 }) {
   const leader =
     investigation?.hypotheses?.[0] ?? null;
@@ -145,7 +147,8 @@ export function TeacherGuideCard({
 
       <p className="suggestion-context">
         {buildNextMoveReading(
-          investigation
+          investigation,
+          selectedProtocol
         )}
       </p>
     </>
@@ -164,10 +167,18 @@ function buildLeaderReading({
 }
 
 function buildNextMoveReading(
-  investigation
+  investigation,
+  selectedProtocol
 ) {
-  const suggestion =
-    investigation.suggestion;
+  const suggestion = investigation.suggestion ?? (
+    selectedProtocol
+      ? suggestObservation(
+          investigation.observations ?? [],
+          selectedProtocol,
+          investigation.hypotheses ?? [],
+        )
+      : null
+  );
 
   if (!suggestion) {
     return "Não há próxima observação sugerida; a turma pode revisar as evidências já registradas.";

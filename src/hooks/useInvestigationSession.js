@@ -13,6 +13,7 @@ import {
   loadPersistedSession,
   saveSession,
 } from "../utils/sessionPersistence.js";
+import { getSpecimenCode } from "../utils/studyInstrumentation.js";
 
 export function useInvestigationSession(
   selectedProtocol
@@ -20,6 +21,8 @@ export function useInvestigationSession(
   const [session, setSession] = useState(
     null
   );
+  const [sessionNotice, setSessionNotice] =
+    useState("");
   useEffect(() => {
     if (!selectedProtocol) {
       setSession(null);
@@ -29,7 +32,10 @@ export function useInvestigationSession(
     const persistedSession = loadPersistedSession(selectedProtocol);
 
     if (!persistedSession) {
-      setSession(startSession(selectedProtocol));
+      setSession(startSession(selectedProtocol, { specimenCode: getSpecimenCode(1) }));
+      setSessionNotice(
+        "Nova investigação iniciada para este protocolo."
+      );
       return;
     }
 
@@ -41,13 +47,18 @@ export function useInvestigationSession(
       // Uma sessão antiga pode conter uma observação que deixou de existir no
       // protocolo. Nesse caso, começa-se uma investigação limpa e válida.
       clearPersistedSession(selectedProtocol.id);
-      setSession(startSession(selectedProtocol));
+      setSession(startSession(selectedProtocol, { specimenCode: getSpecimenCode(1) }));
+      setSessionNotice(
+        "A sessão anterior não era compatível; uma nova investigação foi iniciada."
+      );
     }
   }, [selectedProtocol]);
 
   useEffect(() => {
-    if (session) {
-      saveSession(session);
+    if (session && !saveSession(session)) {
+      setSessionNotice(
+        "Não foi possível salvar a investigação neste navegador. Verifique o armazenamento disponível."
+      );
     }
   }, [session]);
 
@@ -55,6 +66,9 @@ export function useInvestigationSession(
     session?.investigation ?? null;
   const archivedInvestigations =
     session?.archivedInvestigations ?? [];
+  const completedInvestigations =
+    archivedInvestigations.filter((item) => item?.finalizedAt).length +
+    (investigation?.finalizedAt ? 1 : 0);
   const report = useMemo(
     () =>
       session
@@ -119,7 +133,10 @@ export function useInvestigationSession(
     }
 
     clearPersistedSession(selectedProtocol.id);
-    setSession(startSession(selectedProtocol));
+    setSession(startSession(selectedProtocol, { specimenCode: getSpecimenCode(1) }));
+    setSessionNotice(
+      "Investigação reiniciada e sessão anterior removida deste navegador."
+    );
   }
 
   function loadObservations(observations) {
@@ -128,30 +145,57 @@ export function useInvestigationSession(
     }
 
     try {
-      const loadedSession = observations.reduce(
+      const validObservations = observations.filter(
+        (obs) =>
+          Array.isArray(obs) &&
+          obs.length >= 2 &&
+          typeof obs[0] === "string" &&
+          obs[0].length > 0 &&
+          obs[1] !== undefined &&
+          obs[1] !== null
+      );
+
+      const loadedSession = validObservations.reduce(
         (nextSession, [structure, value]) =>
           addSessionObservation(nextSession, {
             structure,
             value,
           }),
-        startSession(selectedProtocol)
+        startSession(selectedProtocol, { specimenCode: getSpecimenCode(1) })
       );
 
       setSession(runSession(loadedSession));
     } catch {
-      setSession(startSession(selectedProtocol));
+      setSession(startSession(selectedProtocol, { specimenCode: getSpecimenCode(1) }));
+      setSessionNotice(
+        "Não foi possível carregar o caso; uma nova investigação foi iniciada."
+      );
     }
   }
 
-  function finalizeInvestigationSession() {
+  function transitionSession(transform, successNotice) {
+    if (!session) {
+      return false;
+    }
+
     setSession((currentSession) =>
-      currentSession ? finalizeSession(currentSession) : currentSession
+      currentSession ? transform(currentSession) : currentSession
+    );
+    setSessionNotice(successNotice);
+    return true;
+  }
+
+  function finalizeInvestigationSession() {
+    transitionSession(
+      finalizeSession,
+      "Investigação encerrada pelo aluno. O relatório final foi gerado."
     );
   }
 
   function reopenInvestigationSession() {
-    setSession((currentSession) =>
-      currentSession ? reopenSession(currentSession) : currentSession
+    transitionSession(
+      reopenSession,
+      "Investigação reaberta para novas observações."
     );
   }
 
@@ -162,7 +206,7 @@ export function useInvestigationSession(
       if (!currentSession) return currentSession;
 
       return {
-        ...startSession(selectedProtocol),
+        ...startSession(selectedProtocol, { specimenCode: getSpecimenCode((currentSession.archivedInvestigations?.length ?? 0) + 1) }),
         archivedInvestigations: [
           ...(currentSession.archivedInvestigations ?? []),
           currentSession.investigation,
@@ -172,30 +216,50 @@ export function useInvestigationSession(
   }
 
   function restoreArchivedInvestigation(index) {
+    if (!selectedProtocol) {
+      setSessionNotice("Não foi possível restaurar a investigação selecionada.");
+      return false;
+    }
+
+    const archived = session?.archivedInvestigations ?? [];
+    const selected = archived[index];
+
+    if (!session || !selected) {
+      setSessionNotice("Não foi possível restaurar a investigação selecionada.");
+      return false;
+    }
+
     setSession((currentSession) => {
-      const archived = currentSession?.archivedInvestigations ?? [];
-      const selected = archived[index];
-      if (!currentSession || !selected) return currentSession;
+      const currentArchived = currentSession?.archivedInvestigations ?? [];
+      const currentSelected = currentArchived[index];
+
+      if (!currentSession || !currentSelected) {
+        return currentSession;
+      }
 
       return {
         ...currentSession,
         investigation: runSession({
           protocol: selectedProtocol,
-          investigation: selected,
+          investigation: currentSelected,
         }).investigation,
         archivedInvestigations: [
-          ...archived.slice(0, index),
-          ...archived.slice(index + 1),
+          ...currentArchived.slice(0, index),
+          ...currentArchived.slice(index + 1),
           currentSession.investigation,
         ],
       };
     });
+
+    setSessionNotice("Investigação anterior restaurada para edição.");
+    return true;
   }
 
   return {
     session,
     investigation,
     report,
+    sessionNotice,
     activeObservationMap,
     registerObservation,
     unregisterObservation,
@@ -206,5 +270,6 @@ export function useInvestigationSession(
     startNewInvestigation: startNewInvestigationSession,
     restoreArchivedInvestigation,
     archivedInvestigations,
+    completedInvestigations,
   };
 }

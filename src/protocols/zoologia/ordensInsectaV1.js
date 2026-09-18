@@ -30,7 +30,8 @@ const rawOrdensInsectaV1 = {
           "cercos_pinca"
         ]
       }
-    ]
+    ],
+    "requireFinalizedForProgression": true
   },
   "observations": [
     {

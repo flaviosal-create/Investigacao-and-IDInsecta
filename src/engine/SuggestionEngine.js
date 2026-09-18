@@ -93,9 +93,11 @@ function buildDiscriminativeSuggestion({
   runnerUp,
   force = false,
 }) {
+  const margin = typeof leader?.margin === "number" ? leader.margin : 0;
+
   if (
     !runnerUp ||
-    (!force && leader.margin > 1)
+    (!force && margin > 1)
   ) {
     return null;
   }

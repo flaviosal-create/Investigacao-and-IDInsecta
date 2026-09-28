@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import { loadStudyPlan } from "../utils/methodStudyPlan.js";
 
-export function SpecimenEvaluationCard({ investigation, selectedProtocol }) {
+export function SpecimenEvaluationCard({
+  investigation,
+  selectedProtocol,
+  completedInvestigations = 0,
+}) {
   const storageKey = `labsed-specimen-evaluation:${investigation?.id}`;
   const [evaluation, setEvaluation] = useState({ difficulty: "intermediaria", confidence: "3", outcome: "aberto", neededHelp: "nao", comment: "" });
   const [saved, setSaved] = useState(false);
@@ -12,7 +17,11 @@ export function SpecimenEvaluationCard({ investigation, selectedProtocol }) {
     } catch {}
   }, [storageKey]);
 
-  if (!investigation?.observations?.length) return null;
+  const targetSpecimens = loadStudyPlan()?.finalAt ?? 1;
+  const evaluationReady =
+    investigation?.finalizedAt && completedInvestigations >= targetSpecimens;
+
+  if (!evaluationReady) return null;
 
   function update(field, value) {
     setEvaluation((current) => ({ ...current, [field]: value }));
@@ -26,9 +35,9 @@ export function SpecimenEvaluationCard({ investigation, selectedProtocol }) {
 
   return (
     <section className="specimen-evaluation-card" aria-labelledby="specimen-evaluation-title">
-      <span className="report-label">Avaliação deste exemplar</span>
-      <h3 id="specimen-evaluation-title">Como foi esta investigação?</h3>
-      <p>Registre esta avaliação quando terminar de analisar o exemplar atual.</p>
+      <span className="report-label">Avaliação da investigação</span>
+      <h3 id="specimen-evaluation-title">Como foi a atividade completa?</h3>
+      <p>Registre esta avaliação depois de concluir o número planejado de exemplares.</p>
       <div className="specimen-evaluation-grid">
         <label><span>Dificuldade</span><select value={evaluation.difficulty} onChange={(event) => update("difficulty", event.target.value)}><option value="facil">Fácil</option><option value="intermediaria">Intermediária</option><option value="dificil">Difícil</option></select></label>
         <label><span>Confiança na leitura</span><select value={evaluation.confidence} onChange={(event) => update("confidence", event.target.value)}>{[1, 2, 3, 4, 5].map((value) => <option key={value} value={String(value)}>{value}</option>)}</select></label>

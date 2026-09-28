@@ -139,6 +139,7 @@ export function InvestigationWorkspace({
             isFinalized={report?.isFinalized}
             onHighlightStructure={onHighlightStructure}
             onStartSuggestedProtocol={onStartSuggestedProtocol}
+            completedInvestigations={completedInvestigations}
           />
         );
     }
@@ -406,8 +407,19 @@ function WorkspaceReportPanel({
   onStartSuggestedProtocol,
   completedInvestigations = 0,
 }) {
+  const [evaluationOpen, setEvaluationOpen] = useState(false);
+  const targetSpecimens = loadStudyPlan()?.finalAt ?? 1;
+
   if (!report) {
     return null;
+  }
+
+  function finalizeAndOfferEvaluation() {
+    const finalSpecimen = completedInvestigations + 1 >= targetSpecimens;
+    onFinalizeInvestigation();
+    if (finalSpecimen) {
+      setEvaluationOpen(true);
+    }
   }
 
   return (
@@ -419,7 +431,7 @@ function WorkspaceReportPanel({
 
       <ReportFinalizationActions
         report={report}
-        onFinalize={onFinalizeInvestigation}
+        onFinalize={finalizeAndOfferEvaluation}
         onReopen={onReopenInvestigation}
         onStartNew={onStartNewInvestigation}
       />
@@ -460,6 +472,36 @@ function WorkspaceReportPanel({
         selectedProtocol={selectedProtocol}
         onLoadObservations={onLoadObservations}
       />
+
+      {evaluationOpen ? (
+        <div className="evaluation-modal-backdrop" role="presentation">
+          <section
+            className="evaluation-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="evaluation-modal-title"
+          >
+            <div className="evaluation-modal-header">
+              <div>
+                <span className="report-label">Etapa final</span>
+                <h3 id="evaluation-modal-title">Avaliação da atividade</h3>
+              </div>
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={() => setEvaluationOpen(false)}
+              >
+                Fechar
+              </button>
+            </div>
+            <SpecimenEvaluationCard
+              investigation={investigation}
+              selectedProtocol={selectedProtocol}
+              completedInvestigations={completedInvestigations + 1}
+            />
+          </section>
+        </div>
+      ) : null}
     </InsightCard>
   );
 }
@@ -476,6 +518,7 @@ function WorkspaceFocusPanel({
   onHighlightStructure,
   onStartSuggestedProtocol,
   isFinalized,
+  completedInvestigations = 0,
 }) {
   return (
     <section className="workspace-focus-grid">
@@ -487,11 +530,6 @@ function WorkspaceFocusPanel({
         onRegisterObservation={onRegisterObservation}
         onUnregisterObservation={onUnregisterObservation}
         isFinalized={isFinalized}
-      />
-
-      <SpecimenEvaluationCard
-        investigation={investigation}
-        selectedProtocol={selectedProtocol}
       />
 
       <section className="insights-column">

@@ -1800,16 +1800,60 @@ button:disabled {
 .specimen-evaluation-card p { margin: 0; }
 .specimen-evaluation-card h3 { color: #162033; font-size: 1.05rem; }
 .specimen-evaluation-card p { color: #51627e; font-size: .88rem; }
-.specimen-evaluation-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.specimen-evaluation-grid { display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .specimen-evaluation-grid label,
 .specimen-evaluation-comment { display: grid; gap: 5px; }
+.specimen-evaluation-grid label { min-width: 0; }
 .specimen-evaluation-grid label > span,
 .specimen-evaluation-comment > span { color: #51627e; font-size: .78rem; font-weight: 700; }
 .specimen-evaluation-grid select,
 .specimen-evaluation-comment textarea { border: 1px solid #cbd7e6; border-radius: 6px; color: #162033; font: inherit; min-height: 35px; padding: 7px; }
+.specimen-evaluation-grid select { box-sizing: border-box; min-width: 0; width: 100%; }
 .specimen-evaluation-comment textarea { resize: vertical; }
 .specimen-evaluation-footer { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; }
 .specimen-evaluation-footer > span { color: #176237; font-size: .82rem; font-weight: 700; }
+
+.evaluation-modal-backdrop {
+  align-items: center;
+  background: rgba(15, 31, 56, .52);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 20;
+}
+
+.evaluation-modal {
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgba(15, 31, 56, .28);
+  max-height: min(90vh, 860px);
+  max-width: 860px;
+  overflow: auto;
+  padding: 20px;
+  width: min(100%, 860px);
+}
+
+.evaluation-modal-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.evaluation-modal-header h3 {
+  color: #162033;
+  font-size: 1.2rem;
+  margin: 4px 0 0;
+}
+
+.evaluation-modal .specimen-evaluation-card {
+  border: 0;
+  padding: 0;
+}
 
 @media (max-width: 620px) {
   .method-study-grid {
@@ -1827,6 +1871,15 @@ button:disabled {
   .method-dashboard-actions { flex-direction: column; }
   .method-dashboard-import { width: 100%; }
   .specimen-evaluation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .specimen-evaluation-grid { grid-template-columns: 1fr; }
+
+  .evaluation-modal-backdrop { padding: 10px; }
+  .evaluation-modal { max-height: 94vh; padding: 16px; }
+  .evaluation-modal-header { align-items: stretch; flex-direction: column; }
+  .evaluation-modal-header .secondary-button { align-self: flex-end; }
 }
 
 .calibration-observation-list {

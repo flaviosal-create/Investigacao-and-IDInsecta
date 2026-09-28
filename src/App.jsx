@@ -7,7 +7,7 @@ import { InvestigationWorkspace } from "./components/InvestigationWorkspace.jsx"
 import { SidebarContextPanel } from "./components/sidebar/SidebarContextPanel.jsx";
 import { useInvestigationSession } from "./hooks/useInvestigationSession.js";
 import { useProtocolSelection } from "./hooks/useProtocolSelection.js";
-import { getProtocolById, filterZoologyProtocols } from "./config/protocolCatalog.js";
+import { getProtocolById } from "./config/protocolCatalog.js";
 import { BrandLogo } from "./components/ui/BrandLogo.jsx";
 import LegacyInsectaKey from "./legacy-insecta/LegacyInsectaKey.jsx";
 import "./legacy-insecta/legacyStyles.css";
@@ -117,11 +117,20 @@ function InvestigativeExperience({ activePage, setActivePage }) {
     groupedProtocols,
     getProtocolMetadata,
   } = useProtocolSelection();
-  const {
-    domains: dominiosDisponiveis,
-    protocols: protocolosZoologia,
-    groups: gruposZoologia,
-  } = filterZoologyProtocols(domains, domainProtocols, groupedProtocols);
+  const visibleProtocolIds = [
+    "classes-arthropoda-v1",
+    "ordens-insecta-v1",
+  ];
+  const dominiosDisponiveis = domains.filter((domain) => domain.id === "zoologia");
+  const protocolosZoologia = domainProtocols.filter((protocol) =>
+    visibleProtocolIds.includes(protocol.id)
+  );
+  const gruposZoologia = groupedProtocols
+    .map(([label, items]) => [
+      label,
+      items.filter((protocol) => visibleProtocolIds.includes(protocol.id)),
+    ])
+    .filter(([, items]) => items.length > 0);
   const {
     investigation,
     report,

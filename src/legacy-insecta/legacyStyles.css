@@ -59,6 +59,19 @@
 .legacy-insecta-page .config-sessao-action-card span { font-weight: 900; font-size: 17px; }
 .legacy-insecta-page .config-sessao-action-card small { margin-top: 3px; opacity: .82; }
 .legacy-insecta-page .config-sessao-hero { gap: 12px !important; }
+.legacy-insecta-page .config-support-actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.legacy-insecta-page .config-support-actions .btn {
+  justify-content: center;
+  min-height: 42px;
+}
+.legacy-insecta-page .config-support-panel {
+  margin: 16px auto 0;
+  max-width: 980px;
+}
 .legacy-insecta-page .config-brand-row {
   display: flex;
   align-items: center;
@@ -155,4 +168,5 @@
 @media (max-width: 620px) {
   .legacy-insecta-page .legacy-key-toolbar { align-items: flex-start; flex-direction: column; }
   .legacy-insecta-page .config-brand-row { flex-direction: column; gap: 12px; }
+  .legacy-insecta-page .config-support-actions { grid-template-columns: 1fr; }
 }

@@ -13,7 +13,6 @@ from "./insights/NextProtocolCard.jsx";
 import { CalibrationReviewPanel }
 from "./CalibrationReviewPanel.jsx";
 import { MethodEvaluationCard } from "./MethodEvaluationCard.jsx";
-import { MethodEvaluationDashboard } from "./MethodEvaluationDashboard.jsx";
 import { SpecimenEvaluationCard } from "./SpecimenEvaluationCard.jsx";
 import { loadStudyPlan } from "../utils/methodStudyPlan.js";
 import { normalizeInvestigationEvents } from "../utils/studyInstrumentation.js";
@@ -48,10 +47,6 @@ const workspaceTabs = [
   {
     id: "calibracao",
     label: "Revisão docente",
-  },
-  {
-    id: "avaliacao",
-    label: "Avaliação didática",
   },
 ];
 
@@ -130,8 +125,6 @@ export function InvestigationWorkspace({
             onLoadCase={onLoadCalibrationCase}
           />
         );
-      case "avaliacao":
-        return <MethodEvaluationDashboard />;
       default:
         return (
           <WorkspaceFocusPanel
@@ -337,6 +330,12 @@ function SnapshotControls({ report, selectedProtocol, onLoadObservations }) {
     setStatus(downloaded ? "Snapshot da investigação preparado para download." : "Não foi possível preparar o snapshot.");
   }
 
+  function exportResearchData() {
+    const downloaded = downloadResearchSessionExport(report, selectedProtocol);
+    setHasError(!downloaded);
+    setStatus(downloaded ? "Dados de pesquisa preparados para download." : "Não foi possível preparar os dados de pesquisa.");
+  }
+
   function importSnapshot(event) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -368,6 +367,7 @@ function SnapshotControls({ report, selectedProtocol, onLoadObservations }) {
     <>
       <div className="snapshot-actions">
         <button className="secondary-button" type="button" onClick={exportSnapshot}>Exportar investigação (.json)</button>
+        <button className="secondary-button" type="button" onClick={exportResearchData}>Exportar dados de pesquisa (.json)</button>
         <label className="secondary-button snapshot-import-label">
           Importar investigação (.json)
           <input type="file" accept="application/json,.json" onChange={importSnapshot} />

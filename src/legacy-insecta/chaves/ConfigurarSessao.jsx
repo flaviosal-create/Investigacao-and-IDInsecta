@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { chavesConfig } from "./config/chavesConfig.js";
 import { BrandLogo } from "../../components/ui/BrandLogo.jsx";
+import { EvaluationChecklistPanel } from "../../components/EvaluationChecklistPanel.jsx";
+import { InvestigationGuidancePanel } from "../../components/InvestigationGuidancePanel.jsx";
 import LabBioMark from "../components/LabBioMark.jsx";
 import LogoMark from "../components/LogoMark.jsx";
 import { createStudyPlan, loadStudyPlan, saveStudyPlan } from "../../utils/methodStudyPlan.js";
@@ -29,10 +30,10 @@ export default function ConfigurarSessao({
   const [qtdInsetos, setQtdInsetos] = useState(totalDaProva || 1);
   const [tipoTempo, setTipoTempo] = useState(tempoPorInsetoQr > 0 ? "minutos" : "livre");
   const [minutos, setMinutos] = useState(tempoPorInsetoQr > 0 ? tempoPorInsetoQr : 5);
-  const [mostrarChavesFamilia, setMostrarChavesFamilia] = useState(false);
   const [showStudyPlan, setShowStudyPlan] = useState(false);
   const [studySpecimens, setStudySpecimens] = useState(String(loadStudyPlan()?.targetSpecimens ?? 1));
   const [pendingAction, setPendingAction] = useState(null);
+  const [painelEntrada, setPainelEntrada] = useState("");
 
   function startWithStudyPlan(action) {
     if (studyPlanActive && loadStudyPlan()) {
@@ -50,10 +51,6 @@ export default function ConfigurarSessao({
     pendingAction?.();
     setPendingAction(null);
   }
-
-  const ordens = Object.keys(chavesConfig || {}).filter(
-    (ordem) => ordem !== "CHAVE PRINCIPAL" && !ordem.includes(" SUB")
-  );
 
   const tempoMinutos = tipoTempo === "minutos" ? Math.max(1, Number(minutos) || 1) : 0;
   const totalFinal = isProva && totalDaProva > 0
@@ -114,20 +111,40 @@ export default function ConfigurarSessao({
           </div>
         )}
 
+        {!isProva ? (
+          <div className="config-support-actions" aria-label="Apoios pedagógicos">
+            <button
+              className={`btn ${painelEntrada === "orientacoes" ? "btn--primary" : "btn--secondary"}`}
+              type="button"
+              onClick={() => setPainelEntrada((current) => current === "orientacoes" ? "" : "orientacoes")}
+            >
+              Orientações
+            </button>
+            <button
+              className={`btn ${painelEntrada === "avaliacao" ? "btn--primary" : "btn--secondary"}`}
+              type="button"
+              onClick={() => setPainelEntrada((current) => current === "avaliacao" ? "" : "avaliacao")}
+            >
+              Avaliação
+            </button>
+          </div>
+        ) : null}
+
         <div style={assinaturaLab}>
           <LabBioMark compact />
         </div>
       </section>
 
-      {!isProva ? (
-        <ChavesFamiliaSection
-          aluno={aluno}
-          mode={mode}
-          mostrarChavesFamilia={mostrarChavesFamilia}
-          onStart={onStart}
-          ordens={ordens}
-          setMostrarChavesFamilia={setMostrarChavesFamilia}
-        />
+      {!isProva && painelEntrada === "orientacoes" ? (
+        <section className="config-support-panel" aria-label="Orientações do LABSED">
+          <InvestigationGuidancePanel />
+        </section>
+      ) : null}
+
+      {!isProva && painelEntrada === "avaliacao" ? (
+        <section className="config-support-panel" aria-label="Avaliação do LABSED">
+          <EvaluationChecklistPanel />
+        </section>
       ) : null}
 
       {!isProva && chavesPersonalizadas.length ? (
@@ -237,52 +254,6 @@ function ConfiguracaoProvaCard({
         </label>
       ) : null}
     </div>
-  );
-}
-
-function ChavesFamiliaSection({
-  aluno,
-  mode,
-  mostrarChavesFamilia,
-  onStart,
-  ordens,
-  setMostrarChavesFamilia,
-}) {
-  return (
-    <section className="surface config-sessao-card" style={card}>
-      <button
-        type="button"
-        style={ordensToggle}
-        onClick={() => setMostrarChavesFamilia((atual) => !atual)}
-        aria-expanded={mostrarChavesFamilia}
-      >
-        <span>Acesso às chaves de família</span>
-        <span style={ordensToggleIcon}>
-          {mostrarChavesFamilia ? "Fechar" : "Abrir"}
-        </span>
-      </button>
-
-      {mostrarChavesFamilia ? (
-        <div style={ordensConteudo}>
-          <p style={ordensIntro}>
-            Escolha uma ordem para abrir diretamente a chave correspondente.
-          </p>
-
-          <div style={ordensGrid}>
-            {ordens.map((ordem) => (
-              <button
-                key={ordem}
-                type="button"
-                style={btnOrdem}
-                onClick={() => onStart?.(mode, aluno, 1, ordem)}
-              >
-                <span>{ordem}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
-    </section>
   );
 }
 
@@ -439,54 +410,6 @@ const card = {
   padding: 0,
   marginTop: 16,
   overflow: "hidden",
-};
-
-const ordensToggle = {
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: 12,
-  minHeight: 58,
-  padding: "16px 18px",
-  border: "none",
-  background: "var(--color-surface)",
-  color: "var(--color-text)",
-  cursor: "pointer",
-  fontSize: "clamp(17px, 3.6vw, 22px)",
-  fontWeight: 900,
-  lineHeight: 1.15,
-  textAlign: "left",
-};
-
-const ordensToggleIcon = {
-  flexShrink: 0,
-  padding: "5px 9px",
-  borderRadius: 999,
-  background: "var(--color-bg-soft)",
-  color: "var(--color-primary)",
-  fontSize: 12,
-  fontWeight: 900,
-};
-
-const ordensConteudo = {
-  padding: "0 18px 18px",
-  borderTop: "1px solid var(--color-border)",
-};
-
-const ordensIntro = {
-  maxWidth: 620,
-  margin: "14px auto 16px",
-  color: "var(--color-muted)",
-  fontSize: 14,
-  lineHeight: 1.45,
-  textAlign: "center",
-};
-
-const ordensGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
-  gap: 12,
 };
 
 const btnOrdem = {
